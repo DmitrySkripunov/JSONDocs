@@ -14,9 +14,20 @@
 
 <script type="text/javascript">
 
-    var json = '{"address":{"streetAddress":"21 2nd Street","city":"New York"},"phoneNumber":[{"location":"home","code":44}]}';
-    var schema = parser(json, "test json");
+    var testJSON = '{"address":{"streetAddress":"21 2nd Street","city":"New York"},"phoneNumber":[{"location":"home","code":44, "test":{"first": 1, "two":null}}]}';
+    var schema = parser(testJSON, "test json");
     console.log(schema);
+    if(schema !== null) {
+        var makedJSON = makeJSON(schema);
+        console.log(makedJSON);
+    }
+
+    if(schema !== null){
+        var makedHTML = makeHTML(schema);
+        if(makedHTML !== null)
+            document.querySelector('body').append(makedHTML);
+    }
+
 </script>
 
 </html>

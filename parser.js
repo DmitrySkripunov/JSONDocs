@@ -67,21 +67,75 @@ function makeJSON(schema){
 	let json = null;
 	if(schema.type === 'object'){
 		json = {};
+		schema.properties.forEach((item) => {
+			json[item.title] = _makeJSONProp(item);
+		});
 	}
 	else{
 		json = [];
+		schema.properties.forEach((item) => {
+			json.push(_makeJSONProp(item));
+		});
 	}
+
+	return json;
 }
 
 function _makeJSONProp(prop){
-	let json = null;
-	if(schema.type === 'object'){
-		json = {};
+	let p = null;
+
+	if(prop.type === 'object' && prop.hasOwnProperty('default')){
+		p = prop.default;
+	}
+	else if(prop.type === 'object'){
+			p = {};
+			prop.properties.forEach((item) => {
+				p[item.title] = _makeJSONProp(item);
+			});
+	}
+	else if(prop.type === 'array') {
+		p = [];
+		prop.properties.forEach((item) => {
+			p.push(_makeJSONProp(item));
+		});
 	}
 	else{
-		json = [];
+		p = prop.default;
 	}
+
+	return p;
 }
+
+/*
+if(typeof prop === 'object'){
+	if(Array.isArray(prop)){
+		cProp.type = 'array';
+		cProp.properties = [];
+		prop.forEach((p, i) => {
+			cProp.properties.push(_convertProperty(p));
+		});
+	}
+	else {
+		cProp.type = 'object';
+		if(prop === null){
+			cProp.default = prop;
+		}
+		else{
+			cProp.properties = [];
+			for(let key in prop){
+				cProp.properties.push(_convertProperty(prop[key], key));
+			}
+		}
+	}
+
+}
+else{
+	cProp.type = typeof prop;
+	cProp.default = prop;
+}*/
+
+
+
 
 /**
  *
