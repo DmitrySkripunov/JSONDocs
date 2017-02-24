@@ -47,17 +47,16 @@ function parser(json, desc){
 
 	if (Array.isArray(json)) {
 		schema.type = "array";
-		schema.items = [];
+		schema.properties = [];
 		json.forEach((p, i) => {
-			schema.items.push(_convertProperty(p));
+			schema.properties.push(_convertProperty(p));
 		});
 	}
 	else {
-		schema.properties = {};
+		schema.properties = [];
 		schema.type = "object";
 		for (let key in json) {
-			schema.properties[key] = {};
-			schema.properties[key] = _convertProperty(json[key], key);
+			schema.properties.push(_convertProperty(json[key], key));
 		}
 	}
 
@@ -103,9 +102,9 @@ function _convertProperty(prop, propName){
 	if(typeof prop === 'object'){
 		if(Array.isArray(prop)){
 			cProp.type = 'array';
-			cProp.items = [];
+			cProp.properties = [];
 			prop.forEach((p, i) => {
-				cProp.items.push(_convertProperty(p));
+				cProp.properties.push(_convertProperty(p));
 		});
 		}
 		else {
@@ -114,10 +113,9 @@ function _convertProperty(prop, propName){
 				cProp.default = prop;
 			}
 			else{
-				cProp.properties = {};
+				cProp.properties = [];
 				for(let key in prop){
-					cProp.properties[key] = {};
-					cProp.properties[key] = _convertProperty(prop[key], key);
+					cProp.properties.push(_convertProperty(prop[key], key));
 				}
 			}
 		}
