@@ -6,27 +6,69 @@
 
     <script src="./parser.js"></script>
 
+    <style>
+        .object{
+            border: 1px solid tomato;
+        }
+
+        .object-header{
+            padding: 5px;
+        }
+
+        .object-key{
+            padding: 10px;
+            font-weight: bold;
+        }
+
+        .object-value{
+            padding: 5px;
+        }
+
+        .object-description{
+            padding: 5px;
+        }
+
+        #jsonInput{
+            width: 500px;
+            height: 300px;
+        }
+
+
+    </style>
+
 </head>
 <body>
+<textarea id="jsonInput">
 
+</textarea>
+<button onclick="make()">Make</button>
+
+<div id="results"></div>
 
 </body>
 
 <script type="text/javascript">
 
-    var testJSON = '{"address":{"streetAddress":"21 2nd Street","city":"New York"},"phoneNumber":[{"location":"home","code":44, "test":{"first": 1, "two":null}}]}';
-    var schema = parser(testJSON, "test json");
-    console.log(schema);
-    if(schema !== null) {
-        var makedJSON = makeJSON(schema);
-        console.log(makedJSON);
+    function make(){
+        var testJSON = document.querySelector('#jsonInput').value;
+        console.log(testJSON);
+        //var testJSON = '{"address":{"streetAddress":"21 2nd Street","city":"New York"},"phoneNumber":[{"location":"home","code":44, "test":{"first": 1, "two":null}}]}';
+        //var testJSON = '{"address":{"streetAddress":"21 2nd Street","city":"New York"}}';
+        var schema = parser(testJSON, "test json");
+        console.log(schema);
+        if(schema !== null) {
+            var makedJSON = makeJSON(schema);
+            console.log(makedJSON);
+        }
+
+        if(schema !== null){
+            var makedHTML = makeHTML(schema);
+            if(makedHTML !== null)
+                document.querySelector('#results').innerHTML = makedHTML;
+        }
     }
 
-    if(schema !== null){
-        var makedHTML = makeHTML(schema);
-        if(makedHTML !== null)
-            document.querySelector('body').append(makedHTML);
-    }
+
 
 </script>
 
