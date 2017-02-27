@@ -81,6 +81,13 @@
             justify-content: space-between;
         }
 
+        pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
+        .string { color: green; }
+        .number { color: darkorange; }
+        .boolean { color: blue; }
+        .null { color: magenta; }
+        .key { color: red; }
+
 
     </style>
 
@@ -113,6 +120,7 @@
     </div>
 
 
+    <h2>Results</h2>
     <div id="results"></div>
 
 </body>
@@ -138,7 +146,7 @@
         var schema = isSchema ? JSON.parse(testJSON) : parser(testJSON, "test json");
         console.log(schema);
         if(schema !== null) {
-            document.querySelector('#results').innerHTML = JSON.stringify(makeJSON(schema));
+            document.querySelector('#results').innerHTML = syntaxHighlight(JSON.stringify(makeJSON(schema), undefined, 4));
         }
 
     }
