@@ -152,20 +152,37 @@ function _makeJSONProp(prop){
 	return p;
 }
 
-function makeHTML(schema){
+function makeHTML(schema, isRoot = true){
 	let html = '';
+
+	const date = _randomString();
 
 	if(schema.type === 'object' && schema.hasOwnProperty('default')){
 		html += schema.default;
 	}
 	else if(schema.type === 'object' || schema.type === 'array'){
-		html += '<table class="object" cellpadding="0" cellspacing="0" ><tr>';
 
-		html += `<td class="object-header" colspan="2">${(schema.type === 'object') ? 'Object' : 'Array'} {${schema.properties.length}}</td></tr>`;
+		if(!isRoot) {
+			html += `<input type="checkbox" class="table-view-switcher" id="switcher-${date}">`;
+			html += `<label for="switcher-${date}" class="${isRoot ? 'root' : ''}"></label>`;
+		}
 
-		schema.properties.forEach(prop => {
-			html += `<tr><td class="object-key">${(schema.type === 'object') ? prop.title : ''}</td>`;
-			html += `<td class="object-value">${makeHTML(prop)}</td>`;
+		html += `<table class="object ${!isRoot ? 'hide' : ''}" cellpadding="0" cellspacing="0" >`;
+
+		html += '<tr>';
+		html += `<td class="object-header" colspan="2">${(schema.type === 'object') ? 'Object' : 'Array'} {${schema.properties.length}}</td>`;
+		html += `<td>${schema.description}</td>`;
+		html += `</tr>`;
+
+		html += '<tr class="header">';
+		html += `<td>${schema.type === 'array' ? 'Item #' : 'Key'}</td>`;
+		html += '<td>Value</td>';
+		html += '<td>Description</td>';
+		html += '</tr>';
+
+		schema.properties.forEach((prop, i) => {
+			html += `<tr class="row"><td class="object-key">${(schema.type === 'object') ? prop.title : i}</td>`;
+			html += `<td class="object-value">${makeHTML(prop, false)}</td>`;
 			html += `<td class="object-description">${prop.description}</td>`;
 			html += `</tr>`;
 		});
@@ -179,4 +196,14 @@ function makeHTML(schema){
 
 
 	return html;
+}
+
+function _randomString(){
+	var text = "";
+	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+	for( var i=0; i < 5; i++ )
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+	return text;
 }
