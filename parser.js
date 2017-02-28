@@ -203,10 +203,12 @@ function makeJHTML(schema, isRoot = true, level = 1){
 
 	if((schema.type === 'object' || schema.type === 'array') && !schema.hasOwnProperty('default')){
 
-		if(isRoot)
+		if(isRoot) {
 			html += `<span class="key-postfix">${(schema.type === 'object') ? `Object {${schema.properties.length}}` : `Array [${schema.properties.length}]`}</span>`;
+			html += _makeDescHandler(schema);
+		}
 
-		html += `<div style="margin-left:${level*10}px">`;
+		html += `<div class="prop" style="margin-left:${level*10}px">`;
 
 		++level;
 		schema.properties.forEach((prop, i) => {
@@ -230,6 +232,10 @@ function makeJHTML(schema, isRoot = true, level = 1){
 				html += ` <span class="key-postfix">:</span> `;
 			}
 
+			if((prop.type === 'object' || prop.type === 'array') && !prop.hasOwnProperty('default')) {
+				html += _makeDescHandler(prop);
+			}
+
 			html += makeJHTML(prop, false, level);
 			html += `</div>`;
 		});
@@ -244,10 +250,34 @@ function makeJHTML(schema, isRoot = true, level = 1){
 		let cl = schema.type === 'object' ? 'null' : schema.type;
 
 		html += `<span class="${cl}">${schema.default}</span>`;
+		html += _makeDescHandler(schema);
+	}
+
+	function _makeDescHandler(prop){
+		let html = '';
+		html += `<div class="desc-handler">?`;
+		html += `<div class="desc">${_makeDescription(prop)}</div>`;
+		html += `</div>`;
+		return html;
+
+		/*
+		 let html = '';
+		 html += `<div style="display: inline-block; position: relative;">`;
+		 html += `<div class="desc-handler">?</div>`;
+		 html += `<div class="desc">${_makeDescription(prop)}</div>`;
+		 html += `</div>`;
+		 return html;
+		 */
+	}
+
+	function _makeDescription(prop){
+		return prop.description;
 	}
 
 	return html;
 }
+
+
 
 function _randomString(){
 	var text = "";
