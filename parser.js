@@ -152,6 +152,38 @@ function _makeJSONProp(prop){
 	return p;
 }
 
+function _randomString(){
+	var text = "";
+	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+	for( var i=0; i < 5; i++ )
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+	return text;
+}
+
+function syntaxHighlight(json) {
+	if (typeof json != 'string') {
+		json = JSON.stringify(json, undefined, 2);
+	}
+	json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+	return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+		var cls = 'number';
+		if (/^"/.test(match)) {
+			if (/:$/.test(match)) {
+				cls = 'key';
+			} else {
+				cls = 'string';
+			}
+		} else if (/true|false/.test(match)) {
+			cls = 'boolean';
+		} else if (/null/.test(match)) {
+			cls = 'null';
+		}
+		return '<span class="' + cls + '">' + match + '</span>';
+	});
+}
+
 function makeHTML(schema, isRoot = true){
 	let html = '';
 
@@ -259,15 +291,6 @@ function makeJHTML(schema, isRoot = true, level = 1){
 		html += `<div class="desc">${_makeDescription(prop)}</div>`;
 		html += `</div>`;
 		return html;
-
-		/*
-		 let html = '';
-		 html += `<div style="display: inline-block; position: relative;">`;
-		 html += `<div class="desc-handler">?</div>`;
-		 html += `<div class="desc">${_makeDescription(prop)}</div>`;
-		 html += `</div>`;
-		 return html;
-		 */
 	}
 
 	function _makeDescription(prop){
@@ -277,36 +300,77 @@ function makeJHTML(schema, isRoot = true, level = 1){
 	return html;
 }
 
+function makeEditableJHTML(schema, isRoot = true, level = 1){
+	let html = '';
 
+	if((schema.type === 'object' || schema.type === 'array') && !schema.hasOwnProperty('default')){
 
-function _randomString(){
-	var text = "";
-	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-	for( var i=0; i < 5; i++ )
-		text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-	return text;
-}
-
-function syntaxHighlight(json) {
-	if (typeof json != 'string') {
-		json = JSON.stringify(json, undefined, 2);
-	}
-	json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-	return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-		var cls = 'number';
-		if (/^"/.test(match)) {
-			if (/:$/.test(match)) {
-				cls = 'key';
-			} else {
-				cls = 'string';
-			}
-		} else if (/true|false/.test(match)) {
-			cls = 'boolean';
-		} else if (/null/.test(match)) {
-			cls = 'null';
+		if(isRoot) {
+			html += `<span class="key-postfix">${(schema.type === 'object') ? `Object {${schema.properties.length}}` : `Array [${schema.properties.length}]`}</span>`;
+			html += _makeDescHandler(schema);
 		}
-		return '<span class="' + cls + '">' + match + '</span>';
-	});
+
+		html += `<div class="prop" style="margin-left:${level*10}px">`;
+
+		++level;
+		schema.properties.forEach((prop, i) => {
+			html += `<div style="margin: 15px 0;">`;
+
+			if((prop.type === 'object' || prop.type === 'array') && !prop.hasOwnProperty('default')) {
+				const id = _randomString();
+				html += `<input type="checkbox" class="jhtml-view-switcher" id="jhtml-view-switcher-${id}"/>`;
+				html += `<label for="jhtml-view-switcher-${id}"></label>`;
+			}
+
+			function editKey(evt){
+				prop.title = evt;
+			}
+
+			html += `<span contenteditable="true" onkeyup="${editKey()}">`;
+			html += `${(schema.type === 'object') ? prop.title : i}`;
+			html += `</span>`;
+
+			if(prop.type === 'object' && !prop.hasOwnProperty('default')){
+				html += ` <span class="key-postfix">{${prop.properties.length}}</span>`;
+			}
+			else if(prop.type === 'array' && !prop.hasOwnProperty('default')){
+				html += ` <span class="key-postfix">[${prop.properties.length}]</span>`;
+			}else {
+				html += ` <span class="key-postfix">:</span> `;
+			}
+
+			if((prop.type === 'object' || prop.type === 'array') && !prop.hasOwnProperty('default')) {
+				html += _makeDescHandler(prop);
+			}
+
+			html += makeJHTML(prop, false, level);
+			html += `</div>`;
+		});
+
+		html += `</div>`;
+
+		/*if(isRoot)
+		 html += `<div>${(schema.type === 'object') ? '}' : ']'}</div>`;*/
+
+	}
+	else{
+		let cl = schema.type === 'object' ? 'null' : schema.type;
+
+		html += `<span class="${cl}">${schema.default}</span>`;
+		html += _makeDescHandler(schema);
+	}
+
+	function _makeDescHandler(prop){
+		let html = '';
+		html += `<div class="desc-handler">?`;
+		html += `<div class="desc">${_makeDescription(prop)}</div>`;
+		html += `</div>`;
+		return html;
+	}
+
+	function _makeDescription(prop){
+		return prop.description;
+	}
+
+	return html;
 }

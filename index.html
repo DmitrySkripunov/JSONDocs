@@ -199,16 +199,19 @@
 
 
     <h2>Results</h2>
+    <button onclick="switchMode()">Edit Mode</button>
     <div id="results"></div>
 
 </body>
 
 <script type="text/javascript">
 
+    let schema = undefined;
+
     function make(isSchema = false){
         var testJSON = document.querySelector(`#${isSchema ? 'schemaInput' : 'jsonInput'}`).value;
 
-        var schema = isSchema ? JSON.parse(testJSON) : parser(testJSON, "test json");
+        schema = isSchema ? JSON.parse(testJSON) : parser(testJSON, "test json");
 
         if(schema !== null){
             var makedHTML = makeHTML(schema);
@@ -220,7 +223,7 @@
     function make2(isSchema = false){
         var testJSON = document.querySelector(`#${isSchema ? 'schemaInput' : 'jsonInput'}`).value;
 
-        var schema = isSchema ? JSON.parse(testJSON) : parser(testJSON, "test json");
+        schema = isSchema ? JSON.parse(testJSON) : parser(testJSON, "test json");
 
         if(schema !== null) {
             document.querySelector('#results').innerHTML = syntaxHighlight(JSON.stringify(makeJSON(schema), undefined, 4));
@@ -231,7 +234,7 @@
     function make3(isSchema = false){
         var testJSON = document.querySelector(`#${isSchema ? 'schemaInput' : 'jsonInput'}`).value;
 
-        var schema = isSchema ? JSON.parse(testJSON) : parser(testJSON, "test json");
+        schema = isSchema ? JSON.parse(testJSON) : parser(testJSON, "test json");
 
         if(schema !== null) {
             document.querySelector('#results').innerHTML = JSON.stringify(schema);
@@ -242,7 +245,7 @@
     function make4(isSchema = false){
         var testJSON = document.querySelector(`#${isSchema ? 'schemaInput' : 'jsonInput'}`).value;
 
-        var schema = isSchema ? JSON.parse(testJSON) : parser(testJSON, "test json");
+        schema = isSchema ? JSON.parse(testJSON) : parser(testJSON, "test json");
 
         if(schema !== null){
             var makedHTML = makeJHTML(schema);
@@ -251,6 +254,13 @@
         }
     }
 
+    function switchMode(){
+        if(schema !== null && schema !== undefined){
+            var makedHTML = makeEditableJHTML(schema);
+            if(makedHTML !== null)
+                document.querySelector('#results').innerHTML = makedHTML;
+        }
+    }
 
 
 </script>
