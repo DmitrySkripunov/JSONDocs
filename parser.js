@@ -198,6 +198,57 @@ function makeHTML(schema, isRoot = true){
 	return html;
 }
 
+function makeJHTML(schema, isRoot = true, level = 1){
+	let html = '';
+
+	if((schema.type === 'object' || schema.type === 'array') && !schema.hasOwnProperty('default')){
+
+		if(isRoot)
+			html += `<span class="key-postfix">${(schema.type === 'object') ? `Object {${schema.properties.length}}` : `Array [${schema.properties.length}]`}</span>`;
+
+		html += `<div style="margin-left:${level*10}px">`;
+
+		++level;
+		schema.properties.forEach((prop, i) => {
+			html += `<div style="margin: 15px 0;">`;
+
+			if((prop.type === 'object' || prop.type === 'array') && !prop.hasOwnProperty('default')) {
+				const id = _randomString();
+				html += `<input type="checkbox" class="jhtml-view-switcher" id="jhtml-view-switcher-${id}"/>`;
+				html += `<label for="jhtml-view-switcher-${id}"></label>`;
+			}
+
+
+			html += `${(schema.type === 'object') ? prop.title : i}`;
+
+			if(prop.type === 'object' && !prop.hasOwnProperty('default')){
+				html += ` <span class="key-postfix">{${prop.properties.length}}</span>`;
+			}
+			else if(prop.type === 'array' && !prop.hasOwnProperty('default')){
+				html += ` <span class="key-postfix">[${prop.properties.length}]</span>`;
+			}else {
+				html += ` <span class="key-postfix">:</span> `;
+			}
+
+			html += makeJHTML(prop, false, level);
+			html += `</div>`;
+		});
+
+		html += `</div>`;
+
+		/*if(isRoot)
+			html += `<div>${(schema.type === 'object') ? '}' : ']'}</div>`;*/
+
+	}
+	else{
+		let cl = schema.type === 'object' ? 'null' : schema.type;
+
+		html += `<span class="${cl}">${schema.default}</span>`;
+	}
+
+	return html;
+}
+
 function _randomString(){
 	var text = "";
 	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

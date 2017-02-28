@@ -7,6 +7,20 @@
     <script src="./parser.js"></script>
 
     <style>
+        #jsonInput, #schemaInput{
+            width: 500px;
+            height: 300px;
+        }
+
+        .input-block{
+            display: flex;
+            justify-content: space-between;
+        }
+
+
+        /*
+            HTML
+        */
         .object{
             border: 1px solid #888888;
             background: #ffffff;
@@ -44,11 +58,6 @@
             padding: 5px;
         }
 
-        #jsonInput, #schemaInput{
-            width: 500px;
-            height: 300px;
-        }
-
         .header > td{
             background: tomato;
             color: #ffffff;
@@ -76,17 +85,50 @@
             content: 'Hide';
         }
 
-        .input-block{
-            display: flex;
-            justify-content: space-between;
-        }
 
-        pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
+
+        /*
+            JHTML
+        */
         .string { color: green; }
         .number { color: darkorange; }
         .boolean { color: blue; }
         .null { color: magenta; }
         .key { color: red; }
+
+        #results{
+            font-family: monospace,sans-serif;
+        }
+
+        .key-postfix{
+            color: #888888;
+        }
+
+        .jhtml-view-switcher{
+            display: none;
+        }
+
+        .jhtml-view-switcher + label{
+            cursor: pointer;
+        }
+
+        .jhtml-view-switcher + label:before{
+            content: '▶';
+            padding: 5px;
+            margin-left: -10px;
+        }
+
+        .jhtml-view-switcher:checked ~ div{
+            display: block;
+        }
+
+        .jhtml-view-switcher:checked + label:before{
+            content: '▼';
+        }
+
+        .jhtml-view-switcher:not(:checked) ~ div{
+            display: none;
+        }
 
 
     </style>
@@ -101,6 +143,7 @@
             </textarea>
             <div>
                 <button onclick="make()">Make HTML</button>
+                <button onclick="make4()">Make JHTML</button>
                 <button onclick="make2()">Make JSON</button>
                 <button onclick="make3()">Make Schema</button>
             </div>
@@ -113,6 +156,7 @@
             </textarea>
             <div>
                 <button onclick="make(true)">Make HTML</button>
+                <button onclick="make4(true)">Make JHTML</button>
                 <button onclick="make2(true)">Make JSON</button>
                 <button onclick="make3(true)">Make Schema</button>
             </div>
@@ -131,7 +175,6 @@
         var testJSON = document.querySelector(`#${isSchema ? 'schemaInput' : 'jsonInput'}`).value;
 
         var schema = isSchema ? JSON.parse(testJSON) : parser(testJSON, "test json");
-        console.log(schema);
 
         if(schema !== null){
             var makedHTML = makeHTML(schema);
@@ -144,7 +187,7 @@
         var testJSON = document.querySelector(`#${isSchema ? 'schemaInput' : 'jsonInput'}`).value;
 
         var schema = isSchema ? JSON.parse(testJSON) : parser(testJSON, "test json");
-        console.log(schema);
+
         if(schema !== null) {
             document.querySelector('#results').innerHTML = syntaxHighlight(JSON.stringify(makeJSON(schema), undefined, 4));
         }
@@ -155,11 +198,23 @@
         var testJSON = document.querySelector(`#${isSchema ? 'schemaInput' : 'jsonInput'}`).value;
 
         var schema = isSchema ? JSON.parse(testJSON) : parser(testJSON, "test json");
-        console.log(schema);
+
         if(schema !== null) {
             document.querySelector('#results').innerHTML = JSON.stringify(schema);
         }
 
+    }
+
+    function make4(isSchema = false){
+        var testJSON = document.querySelector(`#${isSchema ? 'schemaInput' : 'jsonInput'}`).value;
+
+        var schema = isSchema ? JSON.parse(testJSON) : parser(testJSON, "test json");
+
+        if(schema !== null){
+            var makedHTML = makeJHTML(schema);
+            if(makedHTML !== null)
+                document.querySelector('#results').innerHTML = makedHTML;
+        }
     }
 
 
