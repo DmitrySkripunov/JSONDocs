@@ -322,11 +322,11 @@ function makeEditableJHTML(schema, isRoot = true, level = 1){
 				html += `<label for="jhtml-view-switcher-${id}"></label>`;
 			}
 
-			function editKey(evt){
+			function editKey(evt, prop){
 				prop.title = evt;
 			}
 
-			html += `<span contenteditable="true" onkeyup="${editKey()}">`;
+			html += `<span contenteditable="true" onkeyup="editKey(this.value, ${prop})">`;
 			html += `${(schema.type === 'object') ? prop.title : i}`;
 			html += `</span>`;
 
