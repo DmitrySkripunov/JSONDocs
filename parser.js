@@ -345,11 +345,19 @@ function makeEditableJHTML(schema, isRoot = true, level = 1, parent){
 			}
 
 			const key = document.createElement('span');
-			key.contentEditable = true;
-			key.className = 'editablekey';
-			key.onkeyup = function(evt){
-				prop.title = evt.currentTarget.innerText;
-			};
+			if(schema.type !== 'array') {
+				key.contentEditable = true;
+				key.className = 'editablekey';
+				key.onkeyup = function (evt) {
+					prop.title = evt.currentTarget.innerText;
+				};
+
+				key.onkeydown = function(evt){
+					if(evt.keyCode === 13){
+						evt.preventDefault();
+					}
+				};
+			}
 			key.innerHTML = `${(schema.type === 'object') ? prop.title : i}`;
 
 			propNode.appendChild(key);
@@ -386,6 +394,41 @@ function makeEditableJHTML(schema, isRoot = true, level = 1, parent){
 
 		const value = document.createElement('span');
 		value.className = cl + ' editvalue';
+		value.contentEditable = true;
+		value.onkeyup = function(evt){
+			const putValue =  evt.currentTarget.innerText;
+			/**
+			 * value can be: number, or boolean, or string, or null
+			 * @type {string}
+			 */
+			if(putValue === 'null'){
+				schema.default = null;
+				schema.type = 'object';
+			}
+			else if(putValue === 'true' || putValue === 'false'){
+				schema.default = putValue === 'true';
+				schema.type = 'boolean';
+			}
+			else if(isNumeric(putValue)){
+				schema.default = parseFloat(putValue);
+				schema.type = 'number';
+			}
+			else{
+				schema.default = putValue;
+				schema.type = 'string';
+			}
+
+			let cl = schema.type === 'object' ? 'null' : schema.type;
+			value.className = cl + ' editvalue';
+
+		};
+
+		value.onkeydown = function(evt){
+			if(evt.keyCode === 13){
+				evt.preventDefault();
+			}
+		};
+
 		value.innerHTML = schema.default === null ? 'null' : schema.default;
 
 		html.appendChild(value);
@@ -412,4 +455,8 @@ function makeEditableJHTML(schema, isRoot = true, level = 1, parent){
 	}
 
 	return html;
+}
+
+function isNumeric(n) {
+	return !isNaN(parseFloat(n)) && isFinite(n);
 }
