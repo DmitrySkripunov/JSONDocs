@@ -165,6 +165,14 @@
         }
 
 
+        /*
+            Editable JHTML
+        */
+        .editablekey:hover, .editablekey:focus, .editvalue:hover, .editvalue:focus{
+            background: yellow;
+        }
+
+
     </style>
 
 </head>
@@ -207,6 +215,7 @@
 <script type="text/javascript">
 
     let schema = undefined;
+    var editableSchema;
 
     function make(isSchema = false){
         var testJSON = document.querySelector(`#${isSchema ? 'schemaInput' : 'jsonInput'}`).value;
@@ -226,7 +235,7 @@
         schema = isSchema ? JSON.parse(testJSON) : parser(testJSON, "test json");
 
         if(schema !== null) {
-            document.querySelector('#results').innerHTML = syntaxHighlight(JSON.stringify(makeJSON(schema), undefined, 4));
+            document.querySelector('#results').innerHTML = '<pre>'+syntaxHighlight(JSON.stringify(makeJSON(schema), undefined, 4))+'</pre>';
         }
 
     }
@@ -256,9 +265,21 @@
 
     function switchMode(){
         if(schema !== null && schema !== undefined){
+            editableSchema = schema;
             var makedHTML = makeEditableJHTML(schema);
-            if(makedHTML !== null)
-                document.querySelector('#results').innerHTML = makedHTML;
+            if(makedHTML !== null) {
+                document.querySelector('#results').innerHTML = '';
+                document.querySelector('#results').appendChild(makedHTML);
+
+                const saveBtn = document.createElement('button');
+                saveBtn.innerHTML = 'Save';
+                saveBtn.onclick = function(){
+                    document.querySelector(`#schemaInput`).value = JSON.stringify(editableSchema);
+                    document.querySelector(`#jsonInput`).value = JSON.stringify(makeJSON(editableSchema));
+                };
+
+                document.querySelector('#results').appendChild(saveBtn);
+            }
         }
     }
 

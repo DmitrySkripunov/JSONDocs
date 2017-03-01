@@ -300,72 +300,111 @@ function makeJHTML(schema, isRoot = true, level = 1){
 	return html;
 }
 
-function makeEditableJHTML(schema, isRoot = true, level = 1){
-	let html = '';
+function makeEditableJHTML(schema, isRoot = true, level = 1, parent){
+	let html;
+	if(parent !== undefined){
+		html = parent;
+	}
+	else{
+		html = document.createElement('div');
+		html.className = 'editmode';
+	}
 
 	if((schema.type === 'object' || schema.type === 'array') && !schema.hasOwnProperty('default')){
 
 		if(isRoot) {
-			html += `<span class="key-postfix">${(schema.type === 'object') ? `Object {${schema.properties.length}}` : `Array [${schema.properties.length}]`}</span>`;
-			html += _makeDescHandler(schema);
+			const postfix = document.createElement('span');
+			postfix.className = 'key-postfix';
+			postfix.innerHTML = (schema.type === 'object') ? `Object {${schema.properties.length}}` : `Array [${schema.properties.length}]`;
+			html.appendChild(postfix);
+			html.appendChild(_makeDescHandler(schema));
 		}
 
-		html += `<div class="prop" style="margin-left:${level*10}px">`;
+		const propBlock = document.createElement('div');
+		propBlock.className = 'prop';
+		propBlock.style = `margin-left:${level*10}px`;
 
 		++level;
 		schema.properties.forEach((prop, i) => {
-			html += `<div style="margin: 15px 0;">`;
+			const propNode = document.createElement('div');
+			propNode.style = "margin: 15px 0;";
+
 
 			if((prop.type === 'object' || prop.type === 'array') && !prop.hasOwnProperty('default')) {
 				const id = _randomString();
-				html += `<input type="checkbox" class="jhtml-view-switcher" id="jhtml-view-switcher-${id}"/>`;
-				html += `<label for="jhtml-view-switcher-${id}"></label>`;
+
+				const switcher = document.createElement('input');
+				switcher.type 			= 'checkbox';
+				switcher.className 	= 'jhtml-view-switcher';
+				switcher.id					= `jhtml-view-switcher-${id}`;
+				propNode.appendChild(switcher);
+
+				const switcherLabel = document.createElement('label');
+				switcherLabel.setAttribute('for', `jhtml-view-switcher-${id}`);
+				propNode.appendChild(switcherLabel);
 			}
 
-			function editKey(evt, prop){
-				prop.title = evt;
-			}
+			const key = document.createElement('span');
+			key.contentEditable = true;
+			key.className = 'editablekey';
+			key.onkeyup = function(evt){
+				prop.title = evt.currentTarget.innerText;
+			};
+			key.innerHTML = `${(schema.type === 'object') ? prop.title : i}`;
 
-			html += `<span contenteditable="true" onkeyup="editKey(this.value, ${prop})">`;
-			html += `${(schema.type === 'object') ? prop.title : i}`;
-			html += `</span>`;
+			propNode.appendChild(key);
+
+			const postfix = document.createElement('span');
+			postfix.className = 'key-postfix';
 
 			if(prop.type === 'object' && !prop.hasOwnProperty('default')){
-				html += ` <span class="key-postfix">{${prop.properties.length}}</span>`;
+				postfix.innerHTML = ` {${prop.properties.length}}`;
 			}
 			else if(prop.type === 'array' && !prop.hasOwnProperty('default')){
-				html += ` <span class="key-postfix">[${prop.properties.length}]</span>`;
+				postfix.innerHTML = ` [${prop.properties.length}]`;
 			}else {
-				html += ` <span class="key-postfix">:</span> `;
+				postfix.innerHTML = ` : `;
 			}
+
+			propNode.appendChild(postfix);
+
 
 			if((prop.type === 'object' || prop.type === 'array') && !prop.hasOwnProperty('default')) {
-				html += _makeDescHandler(prop);
+				propNode.appendChild(_makeDescHandler(prop));
 			}
 
-			html += makeJHTML(prop, false, level);
-			html += `</div>`;
+			makeEditableJHTML(prop, false, level, propNode);
+
+			propBlock.appendChild(propNode);
 		});
 
-		html += `</div>`;
-
-		/*if(isRoot)
-		 html += `<div>${(schema.type === 'object') ? '}' : ']'}</div>`;*/
+		html.appendChild(propBlock);
 
 	}
 	else{
 		let cl = schema.type === 'object' ? 'null' : schema.type;
 
-		html += `<span class="${cl}">${schema.default}</span>`;
-		html += _makeDescHandler(schema);
+		const value = document.createElement('span');
+		value.className = cl + ' editvalue';
+		value.innerHTML = schema.default === null ? 'null' : schema.default;
+
+		html.appendChild(value);
+		html.appendChild(_makeDescHandler(schema));
 	}
 
 	function _makeDescHandler(prop){
-		let html = '';
-		html += `<div class="desc-handler">?`;
-		html += `<div class="desc">${_makeDescription(prop)}</div>`;
-		html += `</div>`;
-		return html;
+		const descHandler = document.createElement('div');
+		descHandler.className = 'desc-handler';
+		descHandler.innerHTML = '?';
+
+		const desc = document.createElement('div');
+		desc.className = 'desc';
+		desc.appendChild(document.createTextNode(_makeDescription(prop)));
+
+
+		descHandler.appendChild(desc);
+
+		return descHandler;
 	}
 
 	function _makeDescription(prop){
