@@ -3,4 +3,6 @@
 TODO:
 
 - check duplicate key in objects
-- values for empty value (to string)
+- placeholder for editable value
+- disable empty key
+- change root type

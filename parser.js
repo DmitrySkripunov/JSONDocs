@@ -280,8 +280,13 @@ function makeJHTML(schema, isRoot = true, level = 1){
 	}
 	else{
 		let cl = schema.type === 'object' ? 'null' : schema.type;
-
-		html += `<span class="${cl}">${schema.default}</span>`;
+		let v = schema.default;
+		if(schema.default === ''){
+			cl += ' empty';
+			v = '(empty string)';
+		}
+		
+		html += `<span class="${cl}">${v}</span>`;
 		html += _makeDescHandler(schema);
 	}
 
@@ -395,6 +400,7 @@ function makeEditableJHTML(schema, isRoot = true, level = 1, parent){
 		const value = document.createElement('span');
 		value.className = cl + ' editablekey';
 		value.contentEditable = true;
+		value.setAttribute('placeholder', '(empty string)');
 		value.onkeyup = function(evt){
 			const putValue =  evt.currentTarget.innerText;
 			/**
@@ -420,7 +426,6 @@ function makeEditableJHTML(schema, isRoot = true, level = 1, parent){
 
 			let cl = schema.type === 'object' ? 'null' : schema.type;
 			value.className = cl + ' editablekey';
-
 		};
 
 		value.onkeydown = function(evt){
@@ -429,7 +434,7 @@ function makeEditableJHTML(schema, isRoot = true, level = 1, parent){
 			}
 		};
 
-		value.innerHTML = schema.default === null ? 'null' : schema.default;
+		value.innerHTML = (schema.default === null) ?  'null' : schema.default;
 
 		html.appendChild(value);
 		html.appendChild(_makeDescHandler(schema));

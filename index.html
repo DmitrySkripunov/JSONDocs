@@ -95,6 +95,7 @@
         .boolean { color: blue; }
         .null { color: magenta; }
         .key { color: red; }
+		.empty{ color: #999999; }
 
         #results{
             font-family: monospace,sans-serif;
@@ -113,7 +114,7 @@
         }
 
         .jhtml-view-switcher + label:before{
-            content: '▶';
+            content: '►';
             padding: 5px;
             margin-left: -10px;
         }
@@ -153,7 +154,7 @@
             top: 0;
             left: 0;
             background: #ffffff;
-            padding: 20px;
+            padding: 10px;
             border-radius: 4px;
             border: 2px solid tomato;
             color: #333333;
@@ -174,6 +175,10 @@
 		.editablekey:focus{
             background: yellow;
         }
+		
+		[contenteditable=true]:empty:before{
+		  content: attr(placeholder);
+		}
 
 
     </style>
