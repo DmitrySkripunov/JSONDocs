@@ -294,7 +294,7 @@ function makeJHTML(schema, isRoot = true, level = 1){
 	}
 
 	function _makeDescription(prop){
-		return prop.description;
+		return prop.description.replace(/(?:\r\n|\r|\n)/g, '<br />');
 	}
 
 	return html;
@@ -442,7 +442,7 @@ function makeEditableJHTML(schema, isRoot = true, level = 1, parent){
 
 		const desc = document.createElement('div');
 		desc.className = 'desc';
-		desc.appendChild(document.createTextNode(_makeDescription(prop)));
+		desc.appendChild(_makeDescription(prop));
 
 
 		descHandler.appendChild(desc);
@@ -451,7 +451,13 @@ function makeEditableJHTML(schema, isRoot = true, level = 1, parent){
 	}
 
 	function _makeDescription(prop){
-		return prop.description;
+		const d = document.createElement('div');
+		d.contentEditable = true;
+		d.innerHTML = prop.description.replace(/(?:\r\n|\r|\n)/g, '<br />');
+		d.onkeyup = function(evt){
+			prop.description = evt.currentTarget.innerText;
+		};
+		return d;
 	}
 
 	return html;
