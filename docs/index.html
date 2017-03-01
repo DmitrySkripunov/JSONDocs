@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JSON Doc</title>
+
+    <script src="./parser.js"></script>
+
+    <style>
+        #jsonInput, #schemaInput{
+            width: 500px;
+            height: 300px;
+        }
+
+        .input-block{
+            display: flex;
+            justify-content: space-between;
+        }
+
+
+        /*
+            HTML
+        */
+        .object{
+            border: 1px solid #888888;
+            background: #ffffff;
+        }
+
+        .object.hide {
+            display: none;
+        }
+
+        .object td{
+            padding: 10px;
+        }
+
+        .object tr.row:nth-child(1n)>td{
+            background: #eeeeee;
+        }
+        .object tr.row:nth-child(2n)>td{
+            background: #ffffff;
+        }
+
+        .object-header{
+            padding: 5px;
+        }
+
+        .object-key{
+            padding: 10px;
+            font-weight: bold;
+        }
+
+        .object-value{
+            padding: 5px;
+        }
+
+        .object-description{
+            padding: 5px;
+        }
+
+        .header > td{
+            background: tomato;
+            color: #ffffff;
+        }
+
+        .table-view-switcher{
+            display: none;
+        }
+
+        .table-view-switcher + label{
+            cursor: pointer;
+            color: blue;
+            text-decoration: underline;
+        }
+
+        .table-view-switcher + label:before{
+            content: 'Show';
+        }
+
+        .table-view-switcher:checked ~ table{
+            display: table;
+        }
+
+        .table-view-switcher:checked + label:before{
+            content: 'Hide';
+        }
+
+
+
+        /*
+            JHTML
+        */
+        .string { color: green; }
+        .number { color: darkorange; }
+        .boolean { color: blue; }
+        .null { color: magenta; }
+        .key { color: red; }
+
+        #results{
+            font-family: monospace,sans-serif;
+        }
+
+        .key-postfix{
+            color: #888888;
+        }
+
+        .jhtml-view-switcher{
+            display: none;
+        }
+
+        .jhtml-view-switcher + label{
+            cursor: pointer;
+        }
+
+        .jhtml-view-switcher + label:before{
+            content: '▶';
+            padding: 5px;
+            margin-left: -10px;
+        }
+
+        .jhtml-view-switcher:checked ~ .prop{
+            display: block;
+        }
+
+        .jhtml-view-switcher:checked + label:before{
+            content: '▼';
+        }
+
+        .jhtml-view-switcher:not(:checked) ~ .prop{
+            display: none;
+        }
+
+        .desc-handler{
+            display: inline-block;
+            background: tomato;
+            color: #ffffff;
+            border-radius: 10px;
+            width: 20px;
+            text-align: center;
+            margin-left: 10px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .desc-handler:hover{
+            width: 50%;
+        }
+
+        .desc-handler > .desc {
+            display: none;
+            position: absolute;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 4px;
+            border: 2px solid tomato;
+            color: #333333;
+            width: 100%;
+			max-height: 200px;
+			overflow-y: auto;
+        }
+
+        .desc-handler:hover > .desc{
+            display: block;
+        }
+
+
+        /*
+            Editable JHTML
+        */
+        .editablekey:hover,
+		.editablekey:focus{
+            background: yellow;
+        }
+
+
+    </style>
+
+</head>
+<body>
+    <div class="input-block">
+        <div>
+            <h2>Load JSON</h2>
+            <textarea id="jsonInput" >
+            {"address":{"streetAddress":"21 2nd Street","city":"New York"},"phoneNumber":[{"location":"home","code":44, "test":{"first": 1, "two":null}}]}
+            </textarea>
+            <div>
+                <button onclick="make()">Make HTML</button>
+                <button onclick="make4()">Make JHTML</button>
+                <button onclick="make2()">Make JSON</button>
+                <button onclick="make3()">Make Schema</button>
+            </div>
+        </div>
+
+        <div>
+            <h2>Load schema</h2>
+            <textarea id="schemaInput" >
+            {"title":"Schema","type":"object","description":"test json","properties":[{"description":"","title":"address","type":"object","properties":[{"description":"","title":"streetAddress","type":"string","default":"21 2nd Street"},{"description":"","title":"city","type":"string","default":"New York"}]},{"description":"","title":"phoneNumber","type":"array","properties":[{"description":"","type":"object","properties":[{"description":"","title":"location","type":"string","default":"home"},{"description":"","title":"code","type":"number","default":44},{"description":"","title":"test","type":"object","properties":[{"description":"","title":"first","type":"number","default":1},{"description":"","title":"two","type":"object","default":null}]}]}]}]}
+            </textarea>
+            <div>
+                <button onclick="make(true)">Make HTML</button>
+                <button onclick="make4(true)">Make JHTML</button>
+                <button onclick="make2(true)">Make JSON</button>
+                <button onclick="make3(true)">Make Schema</button>
+            </div>
+        </div>
+    </div>
+
+
+    <h2>Results</h2>
+    <button onclick="switchMode()">Edit Mode</button>
+    <div id="results"></div>
+
+</body>
+
+<script type="text/javascript">
+
+    let schema = undefined;
+    var editableSchema;
+
+    function make(isSchema = false){
+        var testJSON = document.querySelector(`#${isSchema ? 'schemaInput' : 'jsonInput'}`).value;
+
+        schema = isSchema ? JSON.parse(testJSON) : parser(testJSON, "test json");
+
+        if(schema !== null){
+            var makedHTML = makeHTML(schema);
+            if(makedHTML !== null)
+                document.querySelector('#results').innerHTML = makedHTML;
+        }
+    }
+
+    function make2(isSchema = false){
+        var testJSON = document.querySelector(`#${isSchema ? 'schemaInput' : 'jsonInput'}`).value;
+
+        schema = isSchema ? JSON.parse(testJSON) : parser(testJSON, "test json");
+
+        if(schema !== null) {
+            document.querySelector('#results').innerHTML = '<pre>'+syntaxHighlight(JSON.stringify(makeJSON(schema), undefined, 4))+'</pre>';
+        }
+
+    }
+
+    function make3(isSchema = false){
+        var testJSON = document.querySelector(`#${isSchema ? 'schemaInput' : 'jsonInput'}`).value;
+
+        schema = isSchema ? JSON.parse(testJSON) : parser(testJSON, "test json");
+
+        if(schema !== null) {
+            document.querySelector('#results').innerHTML = JSON.stringify(schema);
+        }
+
+    }
+
+    function make4(isSchema = false){
+        var testJSON = document.querySelector(`#${isSchema ? 'schemaInput' : 'jsonInput'}`).value;
+
+        schema = isSchema ? JSON.parse(testJSON) : parser(testJSON, "test json");
+
+        if(schema !== null){
+            var makedHTML = makeJHTML(schema);
+            if(makedHTML !== null)
+                document.querySelector('#results').innerHTML = makedHTML;
+        }
+    }
+
+    function switchMode(){
+        if(schema !== null && schema !== undefined){
+            editableSchema = schema;
+            var makedHTML = makeEditableJHTML(schema);
+            if(makedHTML !== null) {
+                document.querySelector('#results').innerHTML = '';
+                document.querySelector('#results').appendChild(makedHTML);
+
+                const saveBtn = document.createElement('button');
+                saveBtn.innerHTML = 'Save';
+                saveBtn.onclick = function(){
+                    document.querySelector(`#schemaInput`).value = JSON.stringify(editableSchema);
+                    document.querySelector(`#jsonInput`).value = JSON.stringify(makeJSON(editableSchema));
+                };
+
+                document.querySelector('#results').appendChild(saveBtn);
+            }
+        }
+    }
+
+
+</script>
+
+</html>
