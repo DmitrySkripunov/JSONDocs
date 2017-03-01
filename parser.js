@@ -393,7 +393,7 @@ function makeEditableJHTML(schema, isRoot = true, level = 1, parent){
 		let cl = schema.type === 'object' ? 'null' : schema.type;
 
 		const value = document.createElement('span');
-		value.className = cl + ' editvalue';
+		value.className = cl + ' editablekey';
 		value.contentEditable = true;
 		value.onkeyup = function(evt){
 			const putValue =  evt.currentTarget.innerText;
@@ -419,7 +419,7 @@ function makeEditableJHTML(schema, isRoot = true, level = 1, parent){
 			}
 
 			let cl = schema.type === 'object' ? 'null' : schema.type;
-			value.className = cl + ' editvalue';
+			value.className = cl + ' editablekey';
 
 		};
 
@@ -452,6 +452,7 @@ function makeEditableJHTML(schema, isRoot = true, level = 1, parent){
 
 	function _makeDescription(prop){
 		const d = document.createElement('div');
+		d.className = 'editablekey';
 		d.contentEditable = true;
 		d.innerHTML = prop.description.replace(/(?:\r\n|\r|\n)/g, '<br />');
 		d.onkeyup = function(evt){
