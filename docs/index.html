@@ -1,1 +1,303 @@
-sd
+
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Material-solutions by DmitrySkripunov</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    
+    <script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
+    
+    <link rel="import" href="material-counter/material-counter.html">
+    <link rel="import" href="material-plus-one/material-plus-one.html">
+    <link rel="import" href="round-menu/round-menu.html">
+    <link rel="import" href="play-button/play-button.html">
+    <link rel="import" href="search-spinner/search-spinner.html">
+    
+    <style>
+        article{margin-top: 50px;}
+        #material-plus-one, #material-counter{
+            font-size: 34px;
+            height: 67px;
+            cursor: pointer;
+        }
+    
+        .round-menu{
+            margin: 90px  !important;
+        }
+        
+        .code{
+            padding: 0.8rem;
+            overflow: auto;
+            font-size: 0.9rem;
+            line-height: 1.45;
+            border-radius: 0.3rem;
+            white-space: normal;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font: 1rem Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            color: #567482;
+            word-wrap: normal;
+            background-color: #f3f6fa;
+            border: solid 1px #dce6f0;
+        }
+        
+        #play-button{
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+    
+    <script type="text/javascript">
+        function onLoadBody(){
+            var materialCounter = document.getElementById('material-counter');
+            materialCounter.onclick = function() {
+                this.setAttribute('value', (parseInt(this.value)+1).toString());
+            };
+            
+            var materialPlusOne = document.getElementById('material-plus-one');
+            materialPlusOne.onclick = function() {
+                this.setAttribute('value', (parseInt(this.value)+1).toString());
+            };
+            
+            var searchSpinner = document.getElementById('search-spinner');
+            searchSpinner.addEventListener('search', function(evt){
+                var term = evt.detail['term'];
+                setTimeout(function(){
+                    searchSpinner.stop(5);
+                }, 500);
+            });
+            
+        }
+    </script>
+    
+  </head>
+  <body onload="onLoadBody();">
+    <section class="page-header">
+      <h1 class="project-name">Material-solutions</h1>
+      <h2 class="project-tagline">material design solutions</h2>
+      <a href="https://github.com/DmitrySkripunov/material-solutions" class="btn">View on GitHub</a>
+      <a href="https://github.com/DmitrySkripunov/material-solutions/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/DmitrySkripunov/material-solutions/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+        <p>Welcome to Material solutions Demo pages by Dmitry Skripunov.
+
+        <ul>
+            <li><a href="#hamburger-button">Hamburger button</a></li>
+            <li><a href="#material-counter-article">Material counter</a></li>
+            <li><a href="#material-po-article">Material Plus One</a></li>
+            <li><a href="https://github.com/DmitrySkripunov/material-solutions/tree/master/play-button">Material Play button</a></li>
+            <li><a href="#round-menu-article">Round menu</a></li>
+            <li><a href="#material-play-button-article">Material Play button Javascript</a></li>
+            <li><a href="#search-spinner-article">Search spinner</a></li>
+        </ul>
+        
+        <article>
+            <h3>
+                <a id="hamburger-button" class="anchor" href="#hamburger-button" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+                Hamburger button
+            </h3>
+                      
+            <p>
+                <div>Start animation by click.</div>
+
+                <svg viewBox="0 0 24 24" style="width: 100px;">
+                  <path id="m" d="M 20,4 C 4.206994,4 4,4 4,4 l 0,3 16,0 0,3.5 -16,0 0,3 16,0 0,3.5 -16,0 0,3 16,0 0,-3 0,-3.5 0,-3 0,-3.5 z">
+
+                <animate xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#m" attributeName="d" dur="300ms" id="to-pause" begin="click" repeatCount="1" fill="freeze"
+
+                     keyTimes="0; 0.1; 0.15; 0.2; 0.25; 0.4; 0.6; 0.8; 1"
+
+                      values="
+                M 20,4 C 4.206994,4 4,4 4,4 l 0,3 16,0 0,3.5 -16,0 0,3 16,0 0,3.5 -16,0 0,3 16,0 0,-3 0,-3.5 0,-3 0,-3.5 z;
+                M 21.528624,7.2877478 C 6.9377892,1.244026 8.5943107,1.9301797 8.5943107,1.9301797 L 7.4462604,4.7018183 20.380574,10.059386 19.965061,13.675648 5.1829889,7.5527132 4.0349386,10.324352 18.817011,16.447287 16.55374,19.298182 3.6194261,13.940614 2.4713758,16.712252 15.405689,22.06982 l 1.148051,-2.771638 2.263271,-2.850895 1.14805,-2.771639 0.415513,-3.616262 z;
+                M 21.190237,11.978401 C 13.746137,2.4628818 13.741396,2.4566795 13.741396,2.4566795 L 11.284185,4.2182183 18.733026,13.73994 18.708806,16.592587 7.3950975,5.2788785 5.2737772,7.4001988 16.587486,18.713907 13.904901,18.568065 4.213117,11.289286 l -1.7441217,2.439795 9.6917837,7.278779 1.744122,-2.439795 2.682585,0.145842 2.12132,-2.12132 0.02422,-2.852647 z;
+                M 18.715508,16.391287 C 17.681451,6.7928791 17.653959,6.7618113 17.653959,6.7618113 l -3.032667,0.3998532 1.326714,9.6073785 0.416139,1.992414 L 10.24121,3.9793849 7.4695712,5.1274352 13.592506,19.909508 12.473913,18.20806 6.548885,10.36363 l -2.3401791,1.687701 5.7201798,7.743359 2.5450273,-1.58663 1.118593,1.701448 2.771639,-1.148051 -0.416139,-1.992414 z;
+                m 13.423408,19.910156 c -0.198874,-0.258754 5.033396,-9.52035 5.033396,-9.52035 l -2.3048,-1.276525 -5.744848,10.796875 3.002852,-1.48e-4 0,-16.0000003 -3,0 0,16.0000003 L 13.41,19.91 7.6493497,9.1140392 5.3102007,10.340224 10.41,19.91 l 3,0 -2.999992,8e-6 3,0 -3.002852,1.48e-4 z;
+                m 10.244694,19.890483 c -0.08472,-0.315163 7.895784,-5.145886 7.895784,-5.145886 L 16.698499,12.462262 7.4580403,18.736213 10.23237,19.885218 16.355306,5.1031455 13.583667,3.9550952 7.4607319,18.737168 10.232366,19.885208 7.9147032,8.8997779 l -2.7629151,0.613344 2.3089395,9.2240361 2.7716384,1.14805 -2.7716341,-1.14804 2.7716381,1.14805 -2.7743297,-1.149005 z;
+                m 7.3022677,18.747671 c 0.042337,-0.323594 9.2639983,-1.732593 9.2639983,-1.732593 L 16.107463,14.354654 5.1694554,16.614858 7.2928967,18.73809 18.606606,7.4243824 16.485285,5.3030619 5.1715767,16.616771 7.2928968,18.73808 9.3555977,7.7019345 6.5682804,7.2112687 5.1715765,16.61676 7.2928968,18.73808 5.1715767,16.616771 7.2928967,18.73809 5.1694554,16.614858 z;
+                m 5.0788235,16.481071 c 0.1629484,-0.282761 9.2218535,1.944471 9.2218535,1.944471 L 14.894898,15.792054 3.9245541,13.694416 5.0738324,16.468633 19.855905,10.345699 18.707854,7.5740599 3.9257819,13.696995 5.0738363,16.468623 11.202873,7.061916 8.8154977,5.5419398 3.9257859,13.696985 5.0738363,16.468623 3.9257819,13.696995 5.0738324,16.468633 3.9245541,13.694416 z;
+                m 4,12 c 0.2587526,-0.19888 8,8 8,8 L 14.114,17.886 8.228,12 8.7736934,13.519 20,13.51872 20,10.518719 8.6460122,10.519 8.228,12 14.114,6.114 12,4 l -8,8 0,0 0,0 0,0 0,0 z;">
+
+                </animate> 
+
+                </svg>
+            </p>
+            
+        </article>
+        
+        <article>
+            <h3>
+                <a id="material-counter-article" class="anchor" href="#material-counter-article" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+                Material counter
+            </h3>
+               
+            <p class="code">
+                $ cd your_repo_root/material-counter<br>
+                $ bower update<br>
+                $ node server.js<br>
+                and go to http://localhost:8888<br>
+            </p>
+            
+            <div>
+               <div>Start count by click.</div>
+               <material-counter value="0" id="material-counter"></material-counter> 
+            </div>
+                
+            
+        </article>
+        
+        <article>
+            <h3>
+                <a id="material-po-article" class="anchor" href="#material-po-article" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+                Material plus one
+            </h3>
+                 
+            <p class="code">
+                $ cd your_repo_root/material-plus-one<br>
+                $ bower update<br>
+                $ node server.js<br>
+                and go to http://localhost:8888<br>
+            </p>
+            
+            <div>
+                <div>Start count by click.</div>
+                <material-plus-one value="0" id="material-plus-one"></material-plus-one>
+            </div>
+            
+        </article>
+        
+        <article>
+            <h3>
+                <a id="round-menu-article" class="anchor" href="#round-menu-article" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+                Material round menu
+            </h3>
+            <p>
+                Concept by <a href="https://dribbble.com/shots/1956586-Filter-Menu">https://dribbble.com/shots/1956586-Filter-Menu</a>
+            </p>
+            
+            <p class="code">
+                $ cd your_repo_root/round-menu<br>
+                $ bower update<br>
+                $ node server.js<br>
+                and go to http://localhost:8888<br>
+            </p>
+            
+            <div>
+                <div>Click on the element.</div>
+                
+                <div>Menu for mobile. In that, screens of a mobile devices usually less than monitor screen, an items are arranged only on one side.</div>
+                <div>Used attributes 'mobile' and 'side' (left or right)</div>
+                
+                <table class="round-menu-block">
+                    <tr>
+                        <td>Simple menu</td>
+                        <td>Mobile menu left</td>
+                        <td>Mobile menu right</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <round-menu class='round-menu' id="round-menu">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                            </round-menu>
+                        </td>
+                        <td>
+                            <round-menu class='round-menu' id="round-menu-mobile" mobile>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                            </round-menu>
+                        </td>
+                        <td>
+                            <round-menu class='round-menu' id="round-menu-mobile-right" mobile side="right">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                            </round-menu>
+                        </td>
+                </table>
+            </div>
+            
+        </article>
+        
+        <article>
+            <h3>
+                <a id="material-play-button-article" class="anchor" href="#material-play-button-article" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+                Material play button
+            </h3>
+            
+            <p class="code">
+                $ cd your_repo_root/round-menu<br>
+                $ bower update<br>
+                $ node server.js<br>
+                and go to http://localhost:8888<br>
+            </p>
+            
+            <div>
+                <div>Click on the element.</div>
+                
+                <p>
+                    Event: 'toggle' ('on-toggle' for declarative binding in an another Polymer element)
+                </p>
+                
+                <play-button id="play-button"></play-button>
+            </div>
+            
+        </article>
+        
+        <article>
+            <h3>
+                <a id="search-spinner-article" class="anchor" href="#search-spinner-article" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+                Search spinner
+            </h3>
+            <p>
+                Concept by <a href="https://dribbble.com/shots/1769483-Search-Animation-UX-UI-GIF">https://dribbble.com/shots/1769483-Search-Animation-UX-UI-GIF</a>
+            </p>
+            
+            <p class="code">
+                $ cd your_repo_root/round-menu<br>
+                $ bower update<br>
+                $ node server.js<br>
+                and go to http://localhost:8888<br>
+            </p>
+            
+            <div>
+                <p>
+                    Event: 'search' ('on-search' for declarative binding in an another Polymer element)
+                </p>
+                
+                <search-spinner id="search-spinner"></search-spinner>
+            </div>
+            
+        </article>
+        
+        
+        <footer class="site-footer">
+          <span class="site-footer-owner">
+            <a href="https://github.com/DmitrySkripunov/material-solutions">Material-solutions</a> is maintained by <a href="https://github.com/DmitrySkripunov">DmitrySkripunov</a>.
+          </span>
+
+          <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+          </span>
+        </footer>
+    </section>
+  </body>
+</html>
+
