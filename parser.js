@@ -361,7 +361,13 @@ function makeEditableJHTML(schema, isRoot = true, level = 1, parent){
 				key.setAttribute('placeholder', '(empty string)');
 				key.className = 'editablekey';
 				key.onkeyup = function (evt) {
-					prop.title = evt.currentTarget.innerText;
+					if(_isKeyDuplicate(evt.currentTarget.innerText, schema.properties, i)){
+						alert('Key duplicate!');
+						key.classList.add('error');
+					}else {
+						key.classList.remove('error');
+						prop.title = evt.currentTarget.innerText;
+					}
 				};
 
 				key.onkeydown = function(evt){
@@ -478,4 +484,14 @@ function makeEditableJHTML(schema, isRoot = true, level = 1, parent){
 
 function isNumeric(n) {
 	return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+function _isKeyDuplicate(key, props, keyIndex){
+	let isDuplicate = false;
+
+	props.forEach((prop, i) => {
+		if(prop.title === key && i !== keyIndex) isDuplicate = true;
+	});
+
+	return isDuplicate;
 }
