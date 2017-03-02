@@ -3,5 +3,5 @@
 TODO:
 
 - check duplicate key in objects
-- disable empty key
+- empty string for key
 - change root type

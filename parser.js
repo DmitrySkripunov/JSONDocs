@@ -253,7 +253,13 @@ function makeJHTML(schema, isRoot = true, level = 1){
 			}
 
 
-			html += `${(schema.type === 'object') ? prop.title : i}`;
+			let v = (schema.type === 'object') ? prop.title : i;
+			let cl = '';
+			if(v === ''){
+				cl += ' empty';
+				v = '(empty string)';
+			}
+			html += `<span class="${cl}">${v}</span>`;
 
 			if(prop.type === 'object' && !prop.hasOwnProperty('default')){
 				html += ` <span class="key-postfix">{${prop.properties.length}}</span>`;
@@ -352,6 +358,7 @@ function makeEditableJHTML(schema, isRoot = true, level = 1, parent){
 			const key = document.createElement('span');
 			if(schema.type !== 'array') {
 				key.contentEditable = true;
+				key.setAttribute('placeholder', '(empty string)');
 				key.className = 'editablekey';
 				key.onkeyup = function (evt) {
 					prop.title = evt.currentTarget.innerText;
