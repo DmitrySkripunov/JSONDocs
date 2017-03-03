@@ -362,12 +362,13 @@ function makeEditableJHTML(schema, isRoot = true, level = 1, parent){
 				key.className = 'editablekey';
 				key.onkeyup = function (evt) {
 					if(_isKeyDuplicate(evt.currentTarget.innerText, schema.properties, i)){
-						alert('Key duplicate!');
-						key.classList.add('error');
+						key.title = 'The key is duplicated!';
+						key.classList.add('keyerror');
 					}else {
-						key.classList.remove('error');
-						prop.title = evt.currentTarget.innerText;
+						key.classList.remove('keyerror');
+						key.title = '';
 					}
+					prop.title = evt.currentTarget.innerText;
 				};
 
 				key.onkeydown = function(evt){
