@@ -201,7 +201,7 @@ export function _makeJSONProp(prop) {
 
 }
 
-export function _randomString() {
+export function randomString() {
 
 	let text = '';
 	const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -248,7 +248,7 @@ export function makeHTML(schema, isRoot = true) {
 
 	let html = '';
 
-	const date = _randomString();
+	const date = randomString();
 
 	if(schema.type === 'object' && schema.hasOwnProperty('default')) {
 
@@ -316,7 +316,7 @@ export function makeJHTML(schema, isRoot = true, level = 1) {
 
 			if((prop.type === 'object' || prop.type === 'array') && !prop.hasOwnProperty('default')) {
 
-				const id = _randomString();
+				const id = randomString();
 				html += `<input type="checkbox" class="jhtml-view-switcher" id="jhtml-view-switcher-${id}"/>`;
 				html += `<label for="jhtml-view-switcher-${id}"></label>`;
 
@@ -389,213 +389,6 @@ export function makeJHTML(schema, isRoot = true, level = 1) {
 	function _makeDescription(prop) {
 
 		return prop.description.replace(/(?:\r\n|\r|\n)/g, '<br />');
-
-	}
-
-	return html;
-
-}
-
-export function makeEditableJHTML(schema, isRoot = true, level = 1, parent) {
-
-	let html;
-	if(parent !== undefined) {
-
-		html = parent;
-
-	}	else {
-
-		html = document.createElement('div');
-		html.className = 'editmode';
-
-	}
-
-	if((schema.type === 'object' || schema.type === 'array') && !schema.hasOwnProperty('default')) {
-
-		if(isRoot) {
-
-			html.appendChild(_makeEditHandler(schema, level, html));
-
-			const postfix = document.createElement('span');
-			postfix.className = 'key-postfix';
-			postfix.innerHTML = (schema.type === 'object') ? `Object {${schema.properties.length}}` : `Array [${schema.properties.length}]`;
-			html.appendChild(postfix);
-			html.appendChild(_makeDescHandler(schema));
-
-			_makeEditMenu();
-
-		}
-
-		const propBlock = document.createElement('div');
-		propBlock.className = 'prop';
-		propBlock.style = `margin-left:${level * 10}px`;
-
-		++level;
-		schema.properties.forEach((prop, i) => {
-
-			const propNode = document.createElement('div');
-			propNode.style = 'margin: 15px 0;';
-
-			propNode.appendChild(_makeEditHandler(prop, level, propNode));
-
-			if((prop.type === 'object' || prop.type === 'array') && !prop.hasOwnProperty('default')) {
-
-				const id = _randomString();
-
-				const switcher = document.createElement('input');
-				switcher.type 			= 'checkbox';
-				switcher.className 	= 'jhtml-view-switcher';
-				switcher.id					= `jhtml-view-switcher-${id}`;
-				propNode.appendChild(switcher);
-
-				const switcherLabel = document.createElement('label');
-				switcherLabel.setAttribute('for', `jhtml-view-switcher-${id}`);
-				propNode.appendChild(switcherLabel);
-
-			}
-
-			const key = document.createElement('span');
-			if(schema.type !== 'array') {
-
-				key.contentEditable = true;
-				key.setAttribute('placeholder', '(empty string)');
-				key.className = 'editablekey';
-				key.onkeyup = evt => {
-
-					if(_isKeyDuplicate(evt.currentTarget.innerText, schema.properties, i)) {
-
-						key.title = 'The key is duplicated!';
-						key.classList.add('keyerror');
-
-					} else {
-
-						key.classList.remove('keyerror');
-						key.title = '';
-
-					}
-					prop.title = evt.currentTarget.innerText;
-
-				};
-
-				key.onkeydown = evt => {
-
-					if(evt.keyCode === 13)
-						evt.preventDefault();
-
-				};
-
-			}
-			key.innerHTML = `${(schema.type === 'object') ? prop.title : i}`;
-
-			propNode.appendChild(key);
-
-			const postfix = document.createElement('span');
-			postfix.className = 'key-postfix';
-
-			if(prop.type === 'object' && !prop.hasOwnProperty('default'))
-				postfix.innerHTML = ` {${prop.properties.length}}`;
-			else if(prop.type === 'array' && !prop.hasOwnProperty('default'))
-				postfix.innerHTML = ` [${prop.properties.length}]`;
-			else
-				postfix.innerHTML = ' : ';
-
-			propNode.appendChild(postfix);
-
-			if((prop.type === 'object' || prop.type === 'array') && !prop.hasOwnProperty('default'))
-				propNode.appendChild(_makeDescHandler(prop));
-
-			makeEditableJHTML(prop, false, level, propNode);
-
-			propBlock.appendChild(propNode);
-
-		});
-
-		html.appendChild(propBlock);
-
-	}	else {
-
-		const cl = schema.type === 'object' ? 'null' : schema.type;
-
-		const value = document.createElement('span');
-		value.className = `${cl} editablekey`;
-		value.contentEditable = true;
-		value.setAttribute('placeholder', '(empty string)');
-		value.onkeyup = evt => {
-
-			const putValue =  evt.currentTarget.innerText;
-			/**
-			 * value can be: number, or boolean, or string, or null
-			 * @type {string}
-			 */
-			if(putValue === 'null') {
-
-				schema.default = null;
-				schema.type = 'object';
-
-			}	else if(putValue === 'true' || putValue === 'false') {
-
-				schema.default = putValue === 'true';
-				schema.type = 'boolean';
-
-			}	else if(isNumeric(putValue)) {
-
-				schema.default = parseFloat(putValue);
-				schema.type = 'number';
-
-			}	else {
-
-				schema.default = putValue;
-				schema.type = 'string';
-
-			}
-
-			const cl = schema.type === 'object' ? 'null' : schema.type;
-			value.className = `${cl} editablekey`;
-
-		};
-
-		value.onkeydown = function(evt) {
-
-			if(evt.keyCode === 13)
-				evt.preventDefault();
-
-		};
-
-		value.innerHTML = (schema.default === null) ?  'null' : schema.default;
-
-		html.appendChild(value);
-		html.appendChild(_makeDescHandler(schema));
-
-	}
-
-	function _makeDescHandler(prop) {
-
-		const descHandler = document.createElement('div');
-		descHandler.className = 'desc-handler';
-		descHandler.innerHTML = '?';
-
-		const desc = document.createElement('div');
-		desc.className = 'desc';
-		desc.appendChild(_makeDescription(prop));
-
-		descHandler.appendChild(desc);
-
-		return descHandler;
-
-	}
-
-	function _makeDescription(prop) {
-
-		const d = document.createElement('div');
-		d.className = 'editablekey';
-		d.contentEditable = true;
-		d.innerHTML = prop.description.replace(/(?:\r\n|\r|\n)/g, '<br />');
-		d.onkeyup = evt => {
-
-			prop.description = evt.currentTarget.innerText;
-
-		};
-		return d;
 
 	}
 

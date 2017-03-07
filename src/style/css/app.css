@@ -88,7 +88,7 @@ textarea{
 .key { color: red; }
 .empty{ color: #999999; }
 
-#results{
+.results{
     font-family: monospace,sans-serif;
     border: 1px solid tomato;
     margin: 10px;
@@ -109,7 +109,7 @@ textarea{
 }
 
 .jhtml-view-switcher + label:before{
-    content: '►';
+    content: '▶';
     padding: 5px;
     margin-left: -10px;
 }

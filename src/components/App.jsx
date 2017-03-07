@@ -2,6 +2,7 @@
 
 import React from 'react';
 import {parser, makeJSON, makeHTML, makeJHTML, syntaxHighlight} from '../libs/parser';
+import Editor from './Editor';
 
 class App extends React.Component {
 	shouldComponentUpdate(nextProps, nextState) {
@@ -16,7 +17,9 @@ class App extends React.Component {
 		this.state = {
 			inputJson: '{"address":{"streetAddress":"21 2nd Street","city":"New York"},"phoneNumber":[{"location":"home","code":44, "test":{"first": 1, "two":null}}]}',
 			inputSchema: '{"title":"Schema","type":"object","description":"test json","properties":[{"description":"","title":"address","type":"object","properties":[{"description":"","title":"streetAddress","type":"string","default":"21 2nd Street"},{"description":"","title":"city","type":"string","default":"New York"}]},{"description":"","title":"phoneNumber","type":"array","properties":[{"description":"","type":"object","properties":[{"description":"","title":"location","type":"string","default":"home"},{"description":"","title":"code","type":"number","default":44},{"description":"","title":"test","type":"object","properties":[{"description":"","title":"first","type":"number","default":1},{"description":"","title":"two","type":"object","default":null}]}]}]}]}',
-			result: ''
+			result: '',
+			mode: 'view',
+			schema: undefined
 		};
 
 		this.changeInputJSON 		= this.changeInputJSON.bind(this);
@@ -25,10 +28,14 @@ class App extends React.Component {
 		this.makeSchema 				= this.makeSchema.bind(this);
 		this.makeHTML 					= this.makeHTML.bind(this);
 		this.makeJHTML 					= this.makeJHTML.bind(this);
+		this.switchMode 				= this.switchMode.bind(this);
 
 	}
 
 	render() {
+
+		const results = this.state.mode !== 'edit' 	? <div className="results" dangerouslySetInnerHTML={{__html: this.state.result}}></div>
+																								: <Editor schema={this.state.schema} />;
 
 		return <div>
 							<div className="input-block">
@@ -56,7 +63,9 @@ class App extends React.Component {
 							</div>
 
 							<h2>Results</h2>
-							<div id="results" dangerouslySetInnerHTML={{__html: this.state.result}}></div>
+							<button onClick={this.switchMode}>Mode: {this.state.mode}</button>
+
+							{results}
 
 					</div>;
 
@@ -81,7 +90,10 @@ class App extends React.Component {
 		const schema = evt.target.value !== 'json' ? JSON.parse(testJSON) : parser(testJSON, 'test json');
 
 		if(schema !== null)
-			this.setState({result: `<pre>${syntaxHighlight(JSON.stringify(makeJSON(schema), undefined, 4))}</pre>`});
+			this.setState({
+				result: `<pre>${syntaxHighlight(JSON.stringify(makeJSON(schema), undefined, 4))}</pre>`,
+				schema
+			});
 
 	}
 
@@ -92,7 +104,7 @@ class App extends React.Component {
 		const schema = evt.target.value !== 'json' ? JSON.parse(testJSON) : parser(testJSON, 'test json');
 
 		if(schema !== null)
-			this.setState({result: JSON.stringify(schema)});
+			this.setState({result: JSON.stringify(schema), schema});
 
 	}
 
@@ -103,7 +115,7 @@ class App extends React.Component {
 		const schema = evt.target.value !== 'json' ? JSON.parse(testJSON) : parser(testJSON, 'test json');
 
 		if(schema !== null)
-			this.setState({result: makeHTML(schema)});
+			this.setState({result: makeHTML(schema), schema});
 
 	}
 
@@ -114,8 +126,12 @@ class App extends React.Component {
 		const schema = evt.target.value !== 'json' ? JSON.parse(testJSON) : parser(testJSON, 'test json');
 
 		if(schema !== null)
-			this.setState({result: makeJHTML(schema)});
+			this.setState({result: makeJHTML(schema), schema});
 
+	}
+
+	switchMode(evt) {
+		this.setState({mode: this.state.mode === 'view' ? 'edit' : 'view'});
 	}
 
 }

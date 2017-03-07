@@ -54,7 +54,6 @@
       "while": { "after": false }
     } }],
     "space-infix-ops": 2,
-    "padded-blocks": ["error", { "blocks": "always" }],
     "space-in-parens": 2,
     "array-bracket-spacing": 2,
     "object-curly-spacing": 2,
