@@ -28,7 +28,7 @@ class Editor extends React.Component {
 		const editHandler 	= null;
 		const propsHandler 	= this._makePropsHandler(this.props.schema);
 		const descHandler 	= this._makeDescHandler(this.props.schema);
-		const propsView 		= this.props.schema.properties !== undefined ? this._makeProps(this.props.schema.properties) : null;
+		const propsView 		= this.props.schema.properties !== undefined ? this._makeProps(this.props.schema) : null;
 		let value						= this.props.schema.type === 'object' ? `Object {${this.props.schema.properties.length}}` : `Array [${this.props.schema.properties.length}]`;
 		value = <span className="key-postfix">{value}</span>;
 
@@ -38,8 +38,9 @@ class Editor extends React.Component {
 						</div>;
 	}
 
-	_makeProps(props, level = 1) {
-		const style = {marginLeft: `${level * 10}px`};
+	_makeProps(schema, level = 1) {
+		const props = schema.properties;
+		const style = {marginLeft: `${level * 15}px`};
 
 		const p = [];
 
@@ -50,21 +51,21 @@ class Editor extends React.Component {
 		return <div className="prop" style={style}>{p}</div>;
 	}
 
-	makeProp(schema, level, key) {
+	makeProp(schema, level, propIndex) {
 
 		const editHandler 	= null;
 		const propsHandler 	= this._makePropsHandler(schema);
 		const descHandler 	= this._makeDescHandler(schema);
-		const propsView 		= schema.properties !== undefined ? this._makeProps(schema.properties) : null;
-		const value					= this._makeValue(schema);
+		const propsView 		= schema.properties !== undefined ? this._makeProps(schema) : null;
+		const value					= this._makeValue(schema, propIndex);
 
-		return 	<div key={key} className="editmode" style={{margin: '15px 0'}}>
+		return 	<div key={propIndex} className="editmode">
 							{editHandler} {propsHandler} {value} {descHandler}
 							{propsView}
 						</div>;
 	}
 
-	_makeValue(schema) {
+	_makeValue(schema, propIndex) {
 		let key = undefined;
 		/*if(schema.type !== 'array') {
 			key.contentEditable = true;
@@ -97,7 +98,7 @@ class Editor extends React.Component {
 
 		*/
 
-		key = <span key="0" className="editablekey">{schema.title}</span>;
+		key = <span key="0" className="editablekey">{schema.title !== undefined ? schema.title : propIndex}</span>;
 
 		let postfixValue = undefined;
 		if(schema.type === 'object' && !schema.hasOwnProperty('default')) {

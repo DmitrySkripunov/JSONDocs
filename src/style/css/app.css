@@ -111,7 +111,6 @@ textarea{
 .jhtml-view-switcher + label:before{
     content: '▶';
     padding: 5px;
-    margin-left: -10px;
 }
 
 .jhtml-view-switcher:checked ~ .prop{
@@ -167,6 +166,10 @@ textarea{
 /*
     Editable JHTML
 */
+.editmode{
+    margin: 15px 10px;
+}
+
 .editablekey:hover,
 .editablekey:focus{
     background: yellow;
