@@ -194,6 +194,10 @@ textarea{
     border-radius: 3px;
 }
 
+[contenteditable=true]:empty:hover, [contenteditable=true]:empty:focus {
+    padding: 3px;
+}
+
 [contenteditable=true]:hover, [contenteditable=true]:focus{
     border: none;
 }
