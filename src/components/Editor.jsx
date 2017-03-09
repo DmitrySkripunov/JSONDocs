@@ -113,13 +113,21 @@ class Editor extends React.Component {
 			}
 		};
 
+		let cs = 'editablekey';
+		let title = '';
+		if(schema.title !== undefined && isKeyDuplicate(schema.title, parent.properties, propIndex)) {
+			title = 'The key is duplicated!';
+			cs += ' keyerror';
+		}
+
 
 		const key = <span
 									key="0"
 									onKeyUp={onkeyup}
 									onKeyDown={onkeydown}
 									placeholder="field"
-									className="editablekey"
+									className={cs}
+									title={title}
 									contentEditable
 									suppressContentEditableWarning >
 
