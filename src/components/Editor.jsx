@@ -42,11 +42,16 @@ class Editor extends React.Component {
 			console.log(globalSchema);
 		};
 
-		return 	<div className="results">
+		const onrootclick = _ => {
+			const menu = document.querySelector('#edit-menu');
+			menu.style.display = 'none';
+		};
+
+		return 	<div className="results" onClick={onrootclick}>
 							{editHandler} {propsHandler} {value} {descHandler}
 							{propsView}
 
-							<div>
+							<div className="edit-btns">
 								<button onClick={onclick}>Save</button>
 							</div>
 						</div>;
@@ -213,6 +218,7 @@ class Editor extends React.Component {
 
 	_makeEditHandler(prop) {
 
+		const _self = this;
 		const onclick = function(evt) {
 
 			evt.stopPropagation();
@@ -234,6 +240,22 @@ class Editor extends React.Component {
 
 				const newProp = {
 					'type': 'array',
+					'title': prop.type === 'array' ? undefined : '',
+					'description': '',
+					'properties': []
+				};
+
+				prop.properties.push(newProp);
+
+				menu.style.display = 'none';
+
+				_self.setState({schema: globalSchema});
+			};
+
+			menu.children[1].onclick = function() {
+
+				const newProp = {
+					'type': 'object',
 					'title': '',
 					'description': '',
 					'properties': []
@@ -243,6 +265,7 @@ class Editor extends React.Component {
 
 				menu.style.display = 'none';
 
+				_self.setState({schema: globalSchema});
 			};
 
 
@@ -262,7 +285,7 @@ class Editor extends React.Component {
 
 		};
 
-		return <div className="edithandler"></div>;
+		return <div className="edithandler" onClick={onclick}></div>;
 
 	}
 
