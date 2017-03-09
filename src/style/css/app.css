@@ -113,7 +113,7 @@ textarea{
     padding: 5px;
 }
 
-.jhtml-view-switcher:checked ~ .prop{
+.jhtml-view-switcher:checked ~ .props{
     display: block;
 }
 
@@ -121,7 +121,7 @@ textarea{
     content: '▼';
 }
 
-.jhtml-view-switcher:not(:checked) ~ .prop{
+.jhtml-view-switcher:not(:checked) ~ .props{
     display: none;
 }
 
@@ -166,7 +166,7 @@ textarea{
 /*
     Editable JHTML
 */
-.editmode{
+.prop{
     margin: 15px 10px;
 }
 

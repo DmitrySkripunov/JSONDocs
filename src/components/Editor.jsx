@@ -48,7 +48,7 @@ class Editor extends React.Component {
 			p.push(this.makeProp(props[i], ++level, i));
 		}
 
-		return <div className="prop" style={style}>{p}</div>;
+		return <div className="props" style={style}>{p}</div>;
 	}
 
 	makeProp(schema, level, propIndex) {
@@ -59,7 +59,7 @@ class Editor extends React.Component {
 		const propsView 		= schema.properties !== undefined ? this._makeProps(schema) : null;
 		const value					= this._makeValue(schema, propIndex);
 
-		return 	<div key={propIndex} className="editmode">
+		return 	<div key={propIndex} className="prop">
 							{editHandler} {propsHandler} {value} {descHandler}
 							{propsView}
 						</div>;

@@ -307,17 +307,17 @@ export function makeJHTML(schema, isRoot = true, level = 1) {
 
 		}
 
-		html += `<div class="prop" style="margin-left:${level * 10}px">`;
+		html += `<div class="props" style="margin-left:${level * 10}px">`;
 
 		++level;
 		schema.properties.forEach((prop, i) => {
 
-			html += '<div style="margin: 15px 0;">';
+			html += '<div class="prop">';
 
 			if((prop.type === 'object' || prop.type === 'array') && !prop.hasOwnProperty('default')) {
 
 				const id = randomString();
-				html += `<input type="checkbox" class="jhtml-view-switcher" id="jhtml-view-switcher-${id}"/>`;
+				html += `<input type="checkbox" checked class="jhtml-view-switcher" id="jhtml-view-switcher-${id}"/>`;
 				html += `<label for="jhtml-view-switcher-${id}"></label>`;
 
 			}
