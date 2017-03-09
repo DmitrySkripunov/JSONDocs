@@ -257,9 +257,7 @@ class Editor extends React.Component {
 
 				prop.properties.push(newProp);
 
-				menu.style.display = 'none';
-
-				_self.setState({schema: globalSchema});
+				update();
 			};
 
 			//Insert object
@@ -274,9 +272,30 @@ class Editor extends React.Component {
 
 				prop.properties.push(newProp);
 
-				menu.style.display = 'none';
+				update();
+			};
 
-				_self.setState({schema: globalSchema});
+			//Insert value
+			menu.children[2].onclick = function() {
+
+				const newProp = {
+					'type': 'object',
+					'title': '',
+					'default': '',
+					'description': ''
+				};
+
+				prop.properties.push(newProp);
+
+				update();
+			};
+
+			//Duplicate
+			menu.children[3].onclick = function() {
+
+				parent.properties.splice(propIndex, 0, JSON.parse(JSON.stringify(prop)));
+
+				update();
 			};
 
 			//Remove
@@ -288,7 +307,6 @@ class Editor extends React.Component {
 
 				_self.setState({schema: globalSchema});
 			};
-
 
 			if((prop.type === 'object' || prop.type === 'array') && !prop.hasOwnProperty('default')) {
 				menu.children[0].style.display = 'block';
@@ -302,6 +320,11 @@ class Editor extends React.Component {
 
 			menu.children[4].style.display = (parent === undefined) ? 'none' : 'block';
 
+			function update() {
+				menu.style.display = 'none';
+
+				_self.setState({schema: globalSchema});
+			}
 
 		};
 
