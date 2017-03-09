@@ -80,7 +80,7 @@ class Editor extends React.Component {
 
 	makeProp(schema, propIndex, parent) {
 
-		const editHandler 	= this._makeEditHandler(schema);
+		const editHandler 	= this._makeEditHandler(schema, propIndex, parent);
 		const propsHandler 	= this._makePropsHandler(schema);
 		const descHandler 	= this._makeDescHandler(schema);
 		const propsView 		= schema.properties !== undefined ? this._makeProps(schema) : null;
@@ -225,7 +225,7 @@ class Editor extends React.Component {
 		return <div className="editablekey" contentEditable suppressContentEditableWarning onChange={onkeyup}>{d}</div>;
 	}
 
-	_makeEditHandler(prop) {
+	_makeEditHandler(prop, propIndex, parent) {
 
 		const _self = this;
 		const onclick = function(evt) {
@@ -245,6 +245,7 @@ class Editor extends React.Component {
 			 <li>Duplicate</li>
 			 <li>Remove</li>
 			 */
+			//Insert array
 			menu.children[0].onclick = function() {
 
 				const newProp = {
@@ -261,6 +262,7 @@ class Editor extends React.Component {
 				_self.setState({schema: globalSchema});
 			};
 
+			//Insert object
 			menu.children[1].onclick = function() {
 
 				const newProp = {
@@ -277,20 +279,29 @@ class Editor extends React.Component {
 				_self.setState({schema: globalSchema});
 			};
 
+			//Remove
+			menu.children[4].onclick = function() {
+
+				parent.properties.splice(propIndex, 1);
+
+				menu.style.display = 'none';
+
+				_self.setState({schema: globalSchema});
+			};
+
 
 			if((prop.type === 'object' || prop.type === 'array') && !prop.hasOwnProperty('default')) {
-
 				menu.children[0].style.display = 'block';
 				menu.children[1].style.display = 'block';
 				menu.children[2].style.display = 'block';
-
 			} else {
-
 				menu.children[0].style.display = 'none';
 				menu.children[1].style.display = 'none';
 				menu.children[2].style.display = 'none';
-
 			}
+
+			menu.children[4].style.display = (parent === undefined) ? 'none' : 'block';
+
 
 		};
 
