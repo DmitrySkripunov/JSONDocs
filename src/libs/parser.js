@@ -307,7 +307,7 @@ export function makeJHTML(schema, isRoot = true, level = 1) {
 
 		}
 
-		html += `<div class="props" style="margin-left:${level * 10}px">`;
+		html += `<div class="props ${schema.properties.length <= 0 ? 'empty-object' : ''}" style="margin-left:${level * 10}px">`;
 
 		++level;
 		schema.properties.forEach((prop, i) => {
@@ -355,6 +355,10 @@ export function makeJHTML(schema, isRoot = true, level = 1) {
 
 		});
 
+		if(schema.properties.length <= 0) {
+			html += schema.type === 'object' ? '(empty object)' : '(empty array)';
+		}
+
 		html += '</div>';
 
 		/*if(isRoot)
@@ -393,19 +397,6 @@ export function makeJHTML(schema, isRoot = true, level = 1) {
 	}
 
 	return html;
-
-}
-
-export function _makeEditMenu() {
-
-	const r = document.querySelector('#results');
-
-	r.onclick = function() {
-
-		const menu = document.querySelector('#edit-menu');
-		menu.style.display = 'none';
-
-	};
 
 }
 
