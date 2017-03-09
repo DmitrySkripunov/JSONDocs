@@ -474,7 +474,7 @@ export function isNumeric(n) {
 
 }
 
-export function _isKeyDuplicate(key, props, keyIndex) {
+export function isKeyDuplicate(key, props, keyIndex) {
 
 	let isDuplicate = false;
 

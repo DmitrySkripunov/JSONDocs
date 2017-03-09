@@ -1,7 +1,7 @@
 ﻿'use strict';
 
 import React from 'react';
-import {randomString} from '../libs/parser';
+import {randomString, isKeyDuplicate} from '../libs/parser';
 
 class Editor extends React.Component {
 
@@ -38,26 +38,25 @@ class Editor extends React.Component {
 						</div>;
 	}
 
-	_makeProps(schema, level = 1) {
+	_makeProps(schema) {
 		const props = schema.properties;
-		const style = {marginLeft: `${level * 15}px`};
 
 		const p = [];
 
 		for(let i = 0; i < props.length; i++) {
-			p.push(this.makeProp(props[i], ++level, i));
+			p.push(this.makeProp(props[i], i, schema));
 		}
 
-		return <div className="props" style={style}>{p}</div>;
+		return <div className="props">{p}</div>;
 	}
 
-	makeProp(schema, level, propIndex) {
+	makeProp(schema, propIndex, parent) {
 
 		const editHandler 	= null;
 		const propsHandler 	= this._makePropsHandler(schema);
 		const descHandler 	= this._makeDescHandler(schema);
 		const propsView 		= schema.properties !== undefined ? this._makeProps(schema) : null;
-		const value					= this._makeValue(schema, propIndex);
+		const value					= this._makeValue(schema, propIndex, parent);
 
 		return 	<div key={propIndex} className="prop">
 							{editHandler} {propsHandler} {value} {descHandler}
@@ -65,40 +64,38 @@ class Editor extends React.Component {
 						</div>;
 	}
 
-	_makeValue(schema, propIndex) {
-		let key = undefined;
-		/*if(schema.type !== 'array') {
-			key.contentEditable = true;
-			key.setAttribute('placeholder', '(empty string)');
-			key.className = 'editablekey';
-			key.onkeyup = function (evt) {
-				if(_isKeyDuplicate(evt.currentTarget.innerText, schema.properties, i)){
-					key.title = 'The key is duplicated!';
-					key.classList.add('keyerror');
-				}else {
-					key.classList.remove('keyerror');
-					key.title = '';
-				}
-				prop.title = evt.currentTarget.innerText;
-			};
+	_makeValue(schema, propIndex, parent) {
 
-			key.onkeydown = function(evt){
-				if(evt.keyCode === 13){
-					evt.preventDefault();
-				}
-			};
-		} else {
-			key = <span>{(schema.type !== 'array') ? schema.title : i}</span>;
-		}*/
+		const onkeyup = evt => {
+			if(isKeyDuplicate(evt.currentTarget.innerText, parent.properties, propIndex)) {
+				//key.title = 'The key is duplicated!';
+				//key.classList.add('keyerror');
+			} else {
+				//key.classList.remove('keyerror');
+				//key.title = '';
+			}
+			schema.title = evt.currentTarget.innerText;
+		};
 
-		/*propNode.appendChild(key);
+		const onkeydown = evt => {
+			if(evt.keyCode === 13) {
+				evt.preventDefault();
+			}
+		};
 
-		const postfix = document.createElement('span');
-		postfix.className = 'key-postfix';
 
-		*/
+		const key = <span
+									key="0"
+									onKeyUp={onkeyup}
+									onKeyDown={onkeydown}
+									placeholder="field"
+									className="editablekey"
+									contentEditable
+									suppressContentEditableWarning >
 
-		key = <span key="0" className="editablekey">{schema.title !== undefined ? schema.title : propIndex}</span>;
+										{schema.title !== undefined ? schema.title : propIndex}
+
+								</span>;
 
 		let postfixValue = undefined;
 		if(schema.type === 'object' && !schema.hasOwnProperty('default')) {

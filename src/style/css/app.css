@@ -115,6 +115,7 @@ textarea{
 
 .jhtml-view-switcher:checked ~ .props{
     display: block;
+    margin-left: 15px;
 }
 
 .jhtml-view-switcher:checked + label:before{
@@ -167,9 +168,12 @@ textarea{
     Editable JHTML
 */
 .prop{
-    margin: 15px 10px;
+    margin: 10px;
 }
 
+.editablekey{
+    padding: 2px;
+}
 .editablekey:hover,
 .editablekey:focus{
     background: yellow;
@@ -180,7 +184,13 @@ textarea{
 }
 
 [contenteditable=true]:empty{
-    color: #999999;
+    color: #bbbbbb;
+    border: 1px dashed #bbbbbb;
+    border-radius: 3px;
+}
+
+[contenteditable=true]:hover, [contenteditable=true]:focus{
+    border: none;
 }
 
 .keyerror:after{
