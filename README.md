@@ -2,5 +2,5 @@
 
 TODO:
 
-- check duplicate keys for insert
+- deny save if duplicate
 - change root type

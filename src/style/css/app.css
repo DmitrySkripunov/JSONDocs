@@ -268,3 +268,9 @@ textarea{
 .edit-btns{
     margin: 15px 0;
 }
+
+.description-area{
+    resize: vertical;
+    width: auto;
+    height: auto;
+}

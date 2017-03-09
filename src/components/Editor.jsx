@@ -1,7 +1,7 @@
 ﻿'use strict';
 
 import React from 'react';
-import {randomString, isKeyDuplicate, isNumeric} from '../libs/parser';
+import {randomString, isKeyDuplicate, isNumeric, makeJSON} from '../libs/parser';
 import classnames from 'classnames';
 
 let globalSchema = undefined;
@@ -39,8 +39,14 @@ class Editor extends React.Component {
 		let value						= globalSchema.type === 'object' ? `Object {${globalSchema.properties.length}}` : `Array [${globalSchema.properties.length}]`;
 		value = <span className="key-postfix">{value}</span>;
 
+		const _self = this;
 		const onclick = evt => {
-			console.log(globalSchema);
+			const errors = document.querySelectorAll('.keyerror');
+			if(errors.length <= 0) {
+				_self.props.onSave(globalSchema);
+			} else {
+				alert('JSON has errors!');
+			}
 		};
 
 		const onrootclick = _ => {
@@ -113,7 +119,7 @@ class Editor extends React.Component {
 			}
 		};
 
-		let cs = 'editablekey';
+		let cs = parent.type !== 'array' ? 'editablekey' : '';
 		let title = '';
 		if(schema.title !== undefined && isKeyDuplicate(schema.title, parent.properties, propIndex)) {
 			title = 'The key is duplicated!';
@@ -128,7 +134,7 @@ class Editor extends React.Component {
 									placeholder="field"
 									className={cs}
 									title={title}
-									contentEditable
+									contentEditable={parent.type !== 'array'}
 									suppressContentEditableWarning >
 
 										{schema.title !== undefined ? schema.title : propIndex}
@@ -225,12 +231,14 @@ class Editor extends React.Component {
 	}
 
 	_makeDescription(prop) {
-		const d = prop.description.replace(/(?:\r\n|\r|\n)/g, '<br />');
+		const d = prop.description; //.replace(/(?:\r\n|\r|\n)/g, '<br />');
 
+		const _self = this;
 		const onkeyup = evt => {
-			prop.description = evt.currentTarget.innerText;
+			prop.description = evt.currentTarget.value;
+			_self.setState({schema: globalSchema});
 		};
-		return <div className="editablekey" contentEditable suppressContentEditableWarning onChange={onkeyup}>{d}</div>;
+		return <textarea className="description-area" value={d} onChange={onkeyup}/>;
 	}
 
 	_makeEditHandler(prop, propIndex, parent) {
@@ -273,7 +281,7 @@ class Editor extends React.Component {
 
 				const newProp = {
 					'type': 'object',
-					'title': '',
+					'title': prop.type === 'array' ? undefined : '',
 					'description': '',
 					'properties': []
 				};
@@ -288,7 +296,7 @@ class Editor extends React.Component {
 
 				const newProp = {
 					'type': 'object',
-					'title': '',
+					'title': prop.type === 'array' ? undefined : '',
 					'default': '',
 					'description': ''
 				};
@@ -327,6 +335,7 @@ class Editor extends React.Component {
 			}
 
 			menu.children[4].style.display = (parent === undefined) ? 'none' : 'block';
+			menu.children[3].style.display = (parent === undefined) ? 'none' : 'block';
 
 			function update() {
 				menu.style.display = 'none';

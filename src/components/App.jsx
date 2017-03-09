@@ -29,13 +29,14 @@ class App extends React.Component {
 		this.makeHTML 					= this.makeHTML.bind(this);
 		this.makeJHTML 					= this.makeJHTML.bind(this);
 		this.switchMode 				= this.switchMode.bind(this);
+		this.onsave 						= this.onsave.bind(this);
 
 	}
 
 	render() {
 
 		const results = this.state.mode !== 'edit' 	? <div className="results" dangerouslySetInnerHTML={{__html: this.state.result}}></div>
-																								: <Editor schema={this.state.schema} />;
+																								: <Editor onSave={this.onsave} schema={this.state.schema} />;
 
 		return <div>
 							<div className="input-block">
@@ -72,19 +73,14 @@ class App extends React.Component {
 	}
 
 	changeInputJSON(evt) {
-
 		this.setState({inputJson: evt.target.value});
-
 	}
 
 	changeInputSchema(evt) {
-
 		this.setState({inputSchema: evt.target.value});
-
 	}
 
 	makeJSON(evt) {
-
 		const testJSON = evt.target.value === 'json' ? this.state.inputJson : this.state.inputSchema;
 
 		const schema = evt.target.value !== 'json' ? JSON.parse(testJSON) : parser(testJSON, 'test json');
@@ -94,44 +90,45 @@ class App extends React.Component {
 				result: `<pre>${syntaxHighlight(JSON.stringify(makeJSON(schema), undefined, 4))}</pre>`,
 				schema
 			});
-
 	}
 
 	makeSchema(evt) {
-
 		const testJSON = evt.target.value === 'json' ? this.state.inputJson : this.state.inputSchema;
 
 		const schema = evt.target.value !== 'json' ? JSON.parse(testJSON) : parser(testJSON, 'test json');
 
 		if(schema !== null)
 			this.setState({result: JSON.stringify(schema), schema});
-
 	}
 
 	makeHTML(evt) {
-
 		const testJSON = evt.target.value === 'json' ? this.state.inputJson : this.state.inputSchema;
 
 		const schema = evt.target.value !== 'json' ? JSON.parse(testJSON) : parser(testJSON, 'test json');
 
 		if(schema !== null)
 			this.setState({result: makeHTML(schema), schema});
-
 	}
 
 	makeJHTML(evt) {
-
 		const testJSON = evt.target.value === 'json' ? this.state.inputJson : this.state.inputSchema;
 
 		const schema = evt.target.value !== 'json' ? JSON.parse(testJSON) : parser(testJSON, 'test json');
 
 		if(schema !== null)
 			this.setState({result: makeJHTML(schema), schema});
-
 	}
 
 	switchMode(evt) {
 		this.setState({mode: this.state.mode === 'view' ? 'edit' : 'view'});
+	}
+
+	onsave(schema) {
+		this.setState({
+			inputJson: JSON.stringify(makeJSON(schema)),
+			inputSchema: JSON.stringify(schema)
+		});
+
 	}
 
 }
