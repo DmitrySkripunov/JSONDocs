@@ -2,6 +2,7 @@
 
 import React from 'react';
 import {randomString, isKeyDuplicate, isNumeric} from '../libs/parser';
+import classnames from 'classnames';
 
 let globalSchema = undefined;
 
@@ -60,13 +61,21 @@ class Editor extends React.Component {
 	_makeProps(schema) {
 		const props = schema.properties;
 
-		const p = [];
+		const cs = classnames('props', {
+			'empty-object' : props.length <= 0
+		});
+
+		let p = schema.type === 'object' ? '(empty object)' : '(empty array)';
+
+		if(props.length > 0)
+			p = [];
 
 		for(let i = 0; i < props.length; i++) {
 			p.push(this.makeProp(props[i], i, schema));
 		}
 
-		return <div className="props">{p}</div>;
+
+		return <div className={cs}>{p}</div>;
 	}
 
 	makeProp(schema, propIndex, parent) {

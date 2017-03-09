@@ -2,5 +2,7 @@
 
 TODO:
 
-- change root type
 - empty object
+- empty array
+- check duplicate keys for insert
+- change root type

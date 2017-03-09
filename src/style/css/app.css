@@ -118,6 +118,11 @@ textarea{
     margin-left: 15px;
 }
 
+.jhtml-view-switcher:checked ~ .props.empty-object{
+    color: #bbbbbb;
+    margin: 15px 55px;
+}
+
 .jhtml-view-switcher:checked + label:before{
     content: '▼';
 }
