@@ -1,7 +1,7 @@
 ﻿'use strict';
 
 import React from 'react';
-import {randomString, isKeyDuplicate} from '../libs/parser';
+import {randomString, isKeyDuplicate, isNumeric} from '../libs/parser';
 
 class Editor extends React.Component {
 
@@ -68,11 +68,11 @@ class Editor extends React.Component {
 
 		const onkeyup = evt => {
 			if(isKeyDuplicate(evt.currentTarget.innerText, parent.properties, propIndex)) {
-				//key.title = 'The key is duplicated!';
-				//key.classList.add('keyerror');
+				evt.currentTarget.title = 'The key is duplicated!';
+				evt.currentTarget.classList.add('keyerror');
 			} else {
-				//key.classList.remove('keyerror');
-				//key.title = '';
+				evt.currentTarget.classList.remove('keyerror');
+				evt.currentTarget.title = '';
 			}
 			schema.title = evt.currentTarget.innerText;
 		};
@@ -111,12 +111,52 @@ class Editor extends React.Component {
 		if(!((schema.type === 'object' || schema.type === 'array') && !schema.hasOwnProperty('default'))) {
 
 			const cl = schema.type === 'object' ? 'null' : schema.type;
-
 			const className = `${cl} editablekey`;
 
 			const valueValue = (schema.default === null) ?  'null' : schema.default;
 
-			value = <span key="2" className={className}>{valueValue}</span>;
+			const onkeyup = evt => {
+				const putValue =  evt.currentTarget.innerText;
+				/**
+				 * value can be: number, or boolean, or string, or null
+				 * @type {string}
+				 */
+				if(putValue === 'null') {
+					schema.default = null;
+					schema.type = 'object';
+				} else if(putValue === 'true' || putValue === 'false') {
+					schema.default = putValue === 'true';
+					schema.type = 'boolean';
+				}	else if(isNumeric(putValue)) {
+					schema.default = parseFloat(putValue);
+					schema.type = 'number';
+				}	else {
+					schema.default = putValue;
+					schema.type = 'string';
+				}
+
+				const cl = schema.type === 'object' ? 'null' : schema.type;
+				evt.currentTarget.className = `${cl} editablekey`;
+			};
+
+			const onkeydown = evt => {
+				if(evt.keyCode === 13) {
+					evt.preventDefault();
+				}
+			};
+
+			value = <span
+								key="2"
+								className={className}
+								onKeyUp={onkeyup}
+								onKeyDown={onkeydown}
+								placeholder="value"
+								contentEditable
+								suppressContentEditableWarning >
+
+									{valueValue}
+
+							</span>;
 		}
 
 
