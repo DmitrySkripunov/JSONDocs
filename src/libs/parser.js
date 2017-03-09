@@ -396,65 +396,6 @@ export function makeJHTML(schema, isRoot = true, level = 1) {
 
 }
 
-export function _makeEditHandler(prop, level, propNode) {
-
-	const d = document.createElement('div');
-	d.className = 'edithandler';
-
-	d.onclick = function(evt) {
-
-		evt.stopPropagation();
-
-		const menu = document.querySelector('#edit-menu');
-
-		menu.style.display = 'block';
-		menu.style.left = `${evt.currentTarget.offsetLeft}px`;
-		menu.style.top = `${evt.currentTarget.offsetTop}px`;
-
-		/**
-		 * <li>Insert Array</li>
-		 <li>Insert Object</li>
-		 <li>Insert Value</li>
-		 <li>Duplicate</li>
-		 <li>Remove</li>
-		 */
-		menu.children[0].onclick = function() {
-
-			const newProp = {
-				'type': 'array',
-				'title': '',
-				'description': '',
-				'properties': []
-			};
-
-			prop.properties.push(newProp);
-
-			makeEditableJHTML(newProp, false, level, propNode.lastChild);
-			menu.style.display = 'none';
-
-		};
-
-
-		if((prop.type === 'object' || prop.type === 'array') && !prop.hasOwnProperty('default')) {
-
-			menu.children[0].style.display = 'block';
-			menu.children[1].style.display = 'block';
-			menu.children[2].style.display = 'block';
-
-		} else {
-
-			menu.children[0].style.display = 'none';
-			menu.children[1].style.display = 'none';
-			menu.children[2].style.display = 'none';
-
-		}
-
-	};
-
-	return d;
-
-}
-
 export function _makeEditMenu() {
 
 	const r = document.querySelector('#results');

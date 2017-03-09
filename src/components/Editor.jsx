@@ -3,6 +3,8 @@
 import React from 'react';
 import {randomString, isKeyDuplicate, isNumeric} from '../libs/parser';
 
+let globalSchema = undefined;
+
 class Editor extends React.Component {
 
 	shouldComponentUpdate(nextProps, nextState) {
@@ -12,6 +14,7 @@ class Editor extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			schema: this.props.schema
 		};
 
 		this.makeProp 					= this.makeProp.bind(this);
@@ -19,22 +22,33 @@ class Editor extends React.Component {
 		this._makeDescHandler 	= this._makeDescHandler.bind(this);
 		this._makeDescription 	= this._makeDescription.bind(this);
 		this._makeValue 				= this._makeValue.bind(this);
+		this._makeEditHandler 	= this._makeEditHandler.bind(this);
 	}
 
 	render() {
 
 		if(this.props.schema === undefined || this.props.schema.type === undefined) return null;
 
-		const editHandler 	= null;
-		const propsHandler 	= this._makePropsHandler(this.props.schema);
-		const descHandler 	= this._makeDescHandler(this.props.schema);
-		const propsView 		= this.props.schema.properties !== undefined ? this._makeProps(this.props.schema) : null;
-		let value						= this.props.schema.type === 'object' ? `Object {${this.props.schema.properties.length}}` : `Array [${this.props.schema.properties.length}]`;
+		globalSchema = this.props.schema;
+
+		const editHandler 	= this._makeEditHandler(globalSchema);
+		const propsHandler 	= this._makePropsHandler(globalSchema);
+		const descHandler 	= this._makeDescHandler(globalSchema);
+		const propsView 		= globalSchema.properties !== undefined ? this._makeProps(globalSchema) : null;
+		let value						= globalSchema.type === 'object' ? `Object {${globalSchema.properties.length}}` : `Array [${globalSchema.properties.length}]`;
 		value = <span className="key-postfix">{value}</span>;
+
+		const onclick = evt => {
+			console.log(globalSchema);
+		};
 
 		return 	<div className="results">
 							{editHandler} {propsHandler} {value} {descHandler}
 							{propsView}
+
+							<div>
+								<button onClick={onclick}>Save</button>
+							</div>
 						</div>;
 	}
 
@@ -52,7 +66,7 @@ class Editor extends React.Component {
 
 	makeProp(schema, propIndex, parent) {
 
-		const editHandler 	= null;
+		const editHandler 	= this._makeEditHandler(schema);
 		const propsHandler 	= this._makePropsHandler(schema);
 		const descHandler 	= this._makeDescHandler(schema);
 		const propsView 		= schema.properties !== undefined ? this._makeProps(schema) : null;
@@ -66,6 +80,7 @@ class Editor extends React.Component {
 
 	_makeValue(schema, propIndex, parent) {
 
+		const _self = this;
 		const onkeyup = evt => {
 			if(isKeyDuplicate(evt.currentTarget.innerText, parent.properties, propIndex)) {
 				evt.currentTarget.title = 'The key is duplicated!';
@@ -75,6 +90,7 @@ class Editor extends React.Component {
 				evt.currentTarget.title = '';
 			}
 			schema.title = evt.currentTarget.innerText;
+			_self.setState({schema: globalSchema});
 		};
 
 		const onkeydown = evt => {
@@ -135,8 +151,10 @@ class Editor extends React.Component {
 					schema.type = 'string';
 				}
 
-				const cl = schema.type === 'object' ? 'null' : schema.type;
-				evt.currentTarget.className = `${cl} editablekey`;
+				_self.setState({schema: globalSchema});
+
+				//const cl = schema.type === 'object' ? 'null' : schema.type;
+				//evt.currentTarget.className = `${cl} editablekey`;
 			};
 
 			const onkeydown = evt => {
@@ -191,6 +209,61 @@ class Editor extends React.Component {
 			prop.description = evt.currentTarget.innerText;
 		};
 		return <div className="editablekey" contentEditable suppressContentEditableWarning onChange={onkeyup}>{d}</div>;
+	}
+
+	_makeEditHandler(prop) {
+
+		const onclick = function(evt) {
+
+			evt.stopPropagation();
+
+			const menu = document.querySelector('#edit-menu');
+
+			menu.style.display = 'block';
+			menu.style.left = `${evt.currentTarget.offsetLeft}px`;
+			menu.style.top = `${evt.currentTarget.offsetTop}px`;
+
+			/**
+			 * <li>Insert Array</li>
+			 <li>Insert Object</li>
+			 <li>Insert Value</li>
+			 <li>Duplicate</li>
+			 <li>Remove</li>
+			 */
+			menu.children[0].onclick = function() {
+
+				const newProp = {
+					'type': 'array',
+					'title': '',
+					'description': '',
+					'properties': []
+				};
+
+				prop.properties.push(newProp);
+
+				menu.style.display = 'none';
+
+			};
+
+
+			if((prop.type === 'object' || prop.type === 'array') && !prop.hasOwnProperty('default')) {
+
+				menu.children[0].style.display = 'block';
+				menu.children[1].style.display = 'block';
+				menu.children[2].style.display = 'block';
+
+			} else {
+
+				menu.children[0].style.display = 'none';
+				menu.children[1].style.display = 'none';
+				menu.children[2].style.display = 'none';
+
+			}
+
+		};
+
+		return <div className="edithandler"></div>;
+
 	}
 
 }
