@@ -1,12 +1,13 @@
 ﻿'use strict';
 
-import React from 'react';
+import React, {Component} from 'react';
 import {randomString, isKeyDuplicate, isNumeric, makeJSON} from '../libs/parser';
 import classnames from 'classnames';
+import Textarea from 'react-textarea-autosize';
 
 let globalSchema = undefined;
 
-class Editor extends React.Component {
+class Editor extends Component {
 
 	shouldComponentUpdate(nextProps, nextState) {
 		return true;
@@ -231,14 +232,15 @@ class Editor extends React.Component {
 	}
 
 	_makeDescription(prop) {
-		const d = prop.description; //.replace(/(?:\r\n|\r|\n)/g, '<br />');
-
 		const _self = this;
-		const onkeyup = evt => {
-			prop.description = evt.currentTarget.value;
+		const onchange = evt => {
+			prop.description = evt.target.value;
 			_self.setState({schema: globalSchema});
 		};
-		return <textarea className="description-area" value={d} onChange={onkeyup}/>;
+
+
+		return <Textarea style={{width: '95%'}} value={prop.description} onChange={onchange} />;
+
 	}
 
 	_makeEditHandler(prop, propIndex, parent) {

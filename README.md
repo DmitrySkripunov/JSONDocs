@@ -2,5 +2,6 @@
 
 TODO:
 
-- deny save if duplicate
+- html view - multiline
+- WYSIWIG fro description
 - change root type

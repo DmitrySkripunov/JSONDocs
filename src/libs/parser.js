@@ -267,7 +267,7 @@ export function makeHTML(schema, isRoot = true) {
 
 		html += '<tr>';
 		html += `<td class="object-header" colspan="2">${(schema.type === 'object') ? 'Object' : 'Array'} {${schema.properties.length}}</td>`;
-		html += `<td>${schema.description}</td>`;
+		html += `<td>${schema.description.replace(/(?:\r\n|\r|\n)/g, '<br />')}</td>`;
 		html += '</tr>';
 
 		html += '<tr class="header">';
@@ -280,7 +280,7 @@ export function makeHTML(schema, isRoot = true) {
 
 			html += `<tr class="row"><td class="object-key">${(schema.type === 'object') ? prop.title : i}</td>`;
 			html += `<td class="object-value">${makeHTML(prop, false)}</td>`;
-			html += `<td class="object-description">${prop.description}</td>`;
+			html += `<td class="object-description">${prop.description.replace(/(?:\r\n|\r|\n)/g, '<br />')}</td>`;
 			html += '</tr>';
 
 		});
