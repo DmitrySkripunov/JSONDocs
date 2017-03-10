@@ -1,0 +1,9 @@
+body{
+    width: 1024px;
+    margin: 0 auto;
+}
+
+.btns{
+    display: flex;
+    justify-content: space-between;
+}

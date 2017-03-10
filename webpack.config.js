@@ -40,7 +40,7 @@ var options = {
 		extensions: ['', '.jsx', '.js']
 	},
 	output: {
-		path: path.join(__dirname, 'build'),
+		path: path.join(__dirname, isProduction ? 'docs' : 'build'),
 		filename: "editor.js"
 	},
 	watch: !isProduction,
@@ -61,7 +61,7 @@ var options = {
 			{
 				test: /\.css$/,
 				exclude: /node_modules\/(?!gf_components).*/,
-				loader: ExtractTextPlugin.extract('style-loader', 'css-loader?'+(!isProduction ? 'localIdentName=[name]--[local]--[hash:base64]&' : 'localIdentName=[hash:base64:3]&')+'modules&'+(isProduction ? 'minimize' : 'sourceMap')+'!postcss-loader')
+				loader: ExtractTextPlugin.extract('style-loader', 'css-loader?'+(!isProduction ? 'localIdentName=[name]--[local]--[hash:base64]&' : 'localIdentName=[hash:base64:3]&')+'&'+(isProduction ? 'minimize' : 'sourceMap')+'!postcss-loader')
 			},
 			{
 				test: /\.js|.jsx?$/,
@@ -124,8 +124,8 @@ var options = {
 		quiet: true
 	},
 
-	postcss: function () {
-		return [atImport, SimpleVars, Stylelint(), Autoprefixer, BrowserReporter];
+	postcss: function () { //Stylelint(),
+		return [atImport, SimpleVars, Autoprefixer, BrowserReporter];
 	}
 };
 
