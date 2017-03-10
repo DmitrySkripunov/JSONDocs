@@ -238,8 +238,6 @@ function makeJHTML(schema, isRoot = true, level = 1){
 		if(isRoot) {
 			html += `<span class="key-postfix">${(schema.type === 'object') ? `Object {${schema.properties.length}}` : `Array [${schema.properties.length}]`}</span>`;
 			html += _makeDescHandler(schema);
-
-			_makeEditMenu();
 		}
 
 		html += `<div class="prop" style="margin-left:${level*10}px">`;
@@ -334,6 +332,8 @@ function makeEditableJHTML(schema, isRoot = true, level = 1, parent){
 			postfix.innerHTML = (schema.type === 'object') ? `Object {${schema.properties.length}}` : `Array [${schema.properties.length}]`;
 			html.appendChild(postfix);
 			html.appendChild(_makeDescHandler(schema));
+
+			_makeEditMenu();
 		}
 
 		const propBlock = document.createElement('div');

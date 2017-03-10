@@ -1,0 +1,80 @@
+{
+  "env": {
+    "es6": true
+  },
+  "plugins": [
+    "react"
+  ],
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 6,
+    "ecmaFeatures": {
+      "arrowFunctions": true,
+      "blockBindings": true,
+      "classes": true,
+      "defaultParams": true,
+      "destructuring": true,
+      "forOf": true,
+      "generators": false,
+      "modules": true,
+      "objectLiteralComputedProperties": true,
+      "objectLiteralDuplicateProperties": false,
+      "objectLiteralShorthandMethods": true,
+      "objectLiteralShorthandProperties": true,
+      "restParams": true,
+      "spread": true,
+      "superInFunctions": true,
+      "templateStrings": true,
+      "jsx": true
+    }
+  },
+  "rules": {
+    "prefer-const": 2,
+    "no-const-assign": 2,
+    "no-var": 2,
+    "no-new-object": 2,
+    "object-shorthand": 2,
+    "no-array-constructor": 2,
+    "quotes": [2, "single"],
+    "prefer-template": 2,
+    "no-param-reassign": 1,
+    "prefer-arrow-callback": 2,
+    "arrow-spacing": 2,
+    "arrow-parens": [2, "as-needed"],
+    "arrow-body-style": 2,
+    "no-iterator": 2,
+    "dot-notation": 2,
+    "eqeqeq": 2,
+    "brace-style": 2,
+    "indent": [2, "tab", {"SwitchCase": 1}],
+    "space-before-blocks": 2,
+    "keyword-spacing": ["error", { "overrides": {
+      "if": { "after": false},
+      "for": { "after": false },
+      "while": { "after": false }
+    } }],
+    "space-infix-ops": 2,
+    "space-in-parens": 2,
+    "array-bracket-spacing": 2,
+    "object-curly-spacing": 2,
+    "max-len": [1, 200, 4],
+    "comma-style": 2,
+    "comma-dangle": 2,
+    "semi": 2,
+    "camelcase": 1,
+    "no-underscore-dangle": 0,
+    "yoda": 2,
+    "no-unsafe-finally": 2,
+    "require-yield": 2,
+
+    "react/prefer-es6-class": 1,
+    "react/jsx-pascal-case": 2,
+    "react/jsx-closing-bracket-location": [1, "props-aligned"],
+    "jsx-quotes": 2,
+    "react/jsx-boolean-value": 2,
+    "react/jsx-wrap-multilines": 1,
+    "react/self-closing-comp": 1,
+    "react/jsx-no-bind": 2,
+    "react/no-is-mounted": 2
+  }
+}
