@@ -1,10 +1,12 @@
 {
   "env": {
-    "es6": true
+    "es6": true,
+    "browser": true
   },
   "plugins": [
     "react"
   ],
+  "parser": "@babel/eslint-parser",
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 6,
@@ -41,19 +43,16 @@
     "prefer-arrow-callback": 2,
     "arrow-spacing": 2,
     "arrow-parens": [2, "as-needed"],
-    "arrow-body-style": 2,
+    "arrow-body-style": ["error", "as-needed"],
     "no-iterator": 2,
     "dot-notation": 2,
     "eqeqeq": 2,
     "brace-style": 2,
-    "indent": [2, "tab", {"SwitchCase": 1}],
+    "indent": ["error", 2, {"SwitchCase": 1}],
     "space-before-blocks": 2,
-    "keyword-spacing": ["error", { "overrides": {
-      "if": { "after": false},
-      "for": { "after": false },
-      "while": { "after": false }
-    } }],
+    "keyword-spacing": 2,
     "space-infix-ops": 2,
+    "padded-blocks": [2, "never"],
     "space-in-parens": 2,
     "array-bracket-spacing": 2,
     "object-curly-spacing": 2,
@@ -74,7 +73,7 @@
     "react/jsx-boolean-value": 2,
     "react/jsx-wrap-multilines": 1,
     "react/self-closing-comp": 1,
-    "react/jsx-no-bind": 2,
+    "react/jsx-no-bind": 0,
     "react/no-is-mounted": 2
   }
 }

@@ -30,50 +30,38 @@
  *
  *
  */
-export function parser(json, desc) {
+export function parser(_json, desc) {
+  const schema = {
+    'title': 'Schema',
+    'type': null,
+    'description': ''
+  };
 
-	const schema = {
-		'title': 'Schema',
-		'type': null,
-		'description': ''
-	};
+  let json = _json;
 
-	try {
+  try {
+    json = JSON.parse(json);
+  } catch (ex) {
+    return null;
+  }
 
-		json = JSON.parse(json);
+  schema.description = desc.toString();
 
-	} catch (ex) {
+  if (Array.isArray(json)) {
+    schema.type = 'array';
+    schema.properties = [];
+    json.forEach((p, i) => {
+      schema.properties.push(_convertProperty(p));
+    });
+  } else {
+    schema.properties = [];
+    schema.type = 'object';
+    for (const key in json) {
+      schema.properties.push(_convertProperty(json[key], key));
+    }
+  }
 
-		return null;
-
-	}
-
-	schema.description = desc.toString();
-
-	if(Array.isArray(json)) {
-
-		schema.type = 'array';
-		schema.properties = [];
-		json.forEach((p, i) => {
-
-			schema.properties.push(_convertProperty(p));
-
-		});
-
-	} else {
-
-		schema.properties = [];
-		schema.type = 'object';
-		for(const key in json) {
-
-			schema.properties.push(_convertProperty(json[key], key));
-
-		}
-
-	}
-
-	return schema;
-
+  return schema;
 }
 
 /**
@@ -84,344 +72,239 @@ export function parser(json, desc) {
  * @private
  */
 export function _convertProperty(prop, propName) {
+  const cProp = {
+    'description': ''
+  };
 
-	const cProp = {
-		'description': ''
-	};
+  if (propName !== undefined) {
+    cProp.title = propName;
+  }
 
-	if(propName !== undefined) {
-
-		cProp.title = propName;
-
-	}
-
-	if(typeof prop === 'object') {
-
-		if(Array.isArray(prop)) {
-
-			cProp.type = 'array';
-			cProp.properties = [];
-			prop.forEach((p, i) => {
-
-				cProp.properties.push(_convertProperty(p));
-
-			});
-
-		}	else {
-
-			cProp.type = 'object';
-			if(prop === null) {
-
-				cProp.default = prop;
-
-			} else {
-
-				cProp.properties = [];
-				for(const key in prop) {
-
-					cProp.properties.push(_convertProperty(prop[key], key));
-
-				}
-
-			}
-
-		}
-
-	} else {
-
-		cProp.type = typeof prop;
-		cProp.default = prop;
-
-	}
-
-	return cProp;
-
+  if (typeof prop === 'object') {
+    if (Array.isArray(prop)) {
+      cProp.type = 'array';
+      cProp.properties = [];
+      prop.forEach((p, i) => {
+        cProp.properties.push(_convertProperty(p));
+      });
+    }	else {
+      cProp.type = 'object';
+      if (prop === null) {
+        cProp.default = prop;
+      } else {
+        cProp.properties = [];
+        for (const key in prop) {
+          cProp.properties.push(_convertProperty(prop[key], key));
+        }
+      }
+    }
+  } else {
+    cProp.type = typeof prop;
+    cProp.default = prop;
+  }
+  return cProp;
 }
 
 export function makeJSON(schema) {
+  let json = null;
+  if (schema.type === 'object') {
+    json = {};
+    schema.properties.forEach(item => {
+      json[item.title] = _makeJSONProp(item);
+    });
+  }	else {
+    json = [];
+    schema.properties.forEach(item => {
+      json.push(_makeJSONProp(item));
+    });
+  }
 
-	let json = null;
-	if(schema.type === 'object') {
-
-		json = {};
-		schema.properties.forEach(item => {
-
-			json[item.title] = _makeJSONProp(item);
-
-		});
-
-	}	else {
-
-		json = [];
-		schema.properties.forEach(item => {
-
-			json.push(_makeJSONProp(item));
-
-		});
-
-	}
-
-	return json;
-
+  return json;
 }
 
 export function _makeJSONProp(prop) {
+  let p = null;
+  if (prop.type === 'object' && prop.hasOwnProperty('default')) {
+    p = prop.default;
+  }	else if (prop.type === 'object') {
+    p = {};
+    prop.properties.forEach(item => {
+      p[item.title] = _makeJSONProp(item);
+    });
+  }	else if (prop.type === 'array') {
+    p = [];
+    prop.properties.forEach(item => {
+      p.push(_makeJSONProp(item));
+    });
+  }	else {
+    p = prop.default;
+  }
 
-	let p = null;
-
-	if(prop.type === 'object' && prop.hasOwnProperty('default')) {
-
-		p = prop.default;
-
-	}	else if(prop.type === 'object') {
-
-		p = {};
-		prop.properties.forEach(item => {
-
-			p[item.title] = _makeJSONProp(item);
-
-		});
-
-	}	else if(prop.type === 'array') {
-
-		p = [];
-		prop.properties.forEach(item => {
-
-			p.push(_makeJSONProp(item));
-
-		});
-
-	}	else {
-
-		p = prop.default;
-
-	}
-
-	return p;
-
+  return p;
 }
 
 export function randomString() {
+  let text = '';
+  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-	let text = '';
-	const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-	for(let i = 0; i < 5; i++)
-		text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-	return text;
-
+  for (let i = 0; i < 5; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  return text;
 }
 
 export function syntaxHighlight(json) {
+  if (typeof json !== 'string')
+    json = JSON.stringify(json, undefined, 2);
 
-	if(typeof json !== 'string')
-		json = JSON.stringify(json, undefined, 2);
-
-	json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-	return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, match => {
-
-		let cls = 'number';
-		if(/^"/.test(match)) {
-
-			if(/:$/.test(match))
-				cls = 'key';
-			else
-				cls = 'string';
-
-		} else if(/true|false/.test(match)) {
-
-			cls = 'boolean';
-
-		} else if(/null/.test(match)) {
-
-			cls = 'null';
-
-		}
-		return `<span class=${cls}>${match}</span>`;
-
-	});
-
+  json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, match => {
+    let cls = 'number';
+    if (/^"/.test(match)) {
+      if (/:$/.test(match))
+        cls = 'key';
+      else
+        cls = 'string';
+    } else if (/true|false/.test(match)) {
+      cls = 'boolean';
+    } else if (/null/.test(match)) {
+      cls = 'null';
+    }
+    return `<span class=${cls}>${match}</span>`;
+  });
 }
 
 export function makeHTML(schema, isRoot = true) {
+  let html = '';
 
-	let html = '';
+  const date = randomString();
 
-	const date = randomString();
+  if (schema.type === 'object' && schema.hasOwnProperty('default')) {
+    html += schema.default;
+  }	else if (schema.type === 'object' || schema.type === 'array') {
+    if (!isRoot) {
+      html += `<input type="checkbox" class="table-view-switcher" id="switcher-${date}">`;
+      html += `<label for="switcher-${date}" class="${isRoot ? 'root' : ''}"></label>`;
+    }
 
-	if(schema.type === 'object' && schema.hasOwnProperty('default')) {
+    html += `<table class="object ${!isRoot ? 'hide' : ''}" cellpadding="0" cellspacing="0" >`;
 
-		html += schema.default;
+    html += '<tr>';
+    html += `<td class="object-header" colspan="2">${(schema.type === 'object') ? 'Object' : 'Array'} {${schema.properties.length}}</td>`;
+    html += `<td>${schema.description.replace(/(?:\r\n|\r|\n)/g, '<br />')}</td>`;
+    html += '</tr>';
 
-	}	else if(schema.type === 'object' || schema.type === 'array') {
+    html += '<tr class="header">';
+    html += `<td>${schema.type === 'array' ? 'Item #' : 'Key'}</td>`;
+    html += '<td>Value</td>';
+    html += '<td>Description</td>';
+    html += '</tr>';
 
-		if(!isRoot) {
+    schema.properties.forEach((prop, i) => {
+      html += `<tr class="row"><td class="object-key">${(schema.type === 'object') ? prop.title : i}</td>`;
+      html += `<td class="object-value">${makeHTML(prop, false)}</td>`;
+      html += `<td class="object-description">${prop.description.replace(/(?:\r\n|\r|\n)/g, '<br />')}</td>`;
+      html += '</tr>';
+    });
 
-			html += `<input type="checkbox" class="table-view-switcher" id="switcher-${date}">`;
-			html += `<label for="switcher-${date}" class="${isRoot ? 'root' : ''}"></label>`;
+    html += '</table>';
+  }	else
+    html += schema.default;
 
-		}
-
-		html += `<table class="object ${!isRoot ? 'hide' : ''}" cellpadding="0" cellspacing="0" >`;
-
-		html += '<tr>';
-		html += `<td class="object-header" colspan="2">${(schema.type === 'object') ? 'Object' : 'Array'} {${schema.properties.length}}</td>`;
-		html += `<td>${schema.description.replace(/(?:\r\n|\r|\n)/g, '<br />')}</td>`;
-		html += '</tr>';
-
-		html += '<tr class="header">';
-		html += `<td>${schema.type === 'array' ? 'Item #' : 'Key'}</td>`;
-		html += '<td>Value</td>';
-		html += '<td>Description</td>';
-		html += '</tr>';
-
-		schema.properties.forEach((prop, i) => {
-
-			html += `<tr class="row"><td class="object-key">${(schema.type === 'object') ? prop.title : i}</td>`;
-			html += `<td class="object-value">${makeHTML(prop, false)}</td>`;
-			html += `<td class="object-description">${prop.description.replace(/(?:\r\n|\r|\n)/g, '<br />')}</td>`;
-			html += '</tr>';
-
-		});
-
-		html += '</table>';
-
-	}	else
-		html += schema.default;
-
-	return html;
-
+  return html;
 }
 
 export function makeJHTML(schema, isRoot = true, level = 1) {
+  let html = '';
 
-	let html = '';
+  if ((schema.type === 'object' || schema.type === 'array') && !schema.hasOwnProperty('default')) {
+    if (isRoot) {
+      html += `<span class="key-postfix">${(schema.type === 'object') ? `Object {${schema.properties.length}}` : `Array [${schema.properties.length}]`}</span>`;
+      html += _makeDescHandler(schema);
+    }
 
-	if((schema.type === 'object' || schema.type === 'array') && !schema.hasOwnProperty('default')) {
+    html += `<div class="props ${schema.properties.length <= 0 ? 'empty-object' : ''}" style="margin-left:${level * 10}px">`;
 
-		if(isRoot) {
+    schema.properties.forEach((prop, i) => {
+      html += '<div class="prop">';
 
-			html += `<span class="key-postfix">${(schema.type === 'object') ? `Object {${schema.properties.length}}` : `Array [${schema.properties.length}]`}</span>`;
-			html += _makeDescHandler(schema);
-
-		}
-
-		html += `<div class="props ${schema.properties.length <= 0 ? 'empty-object' : ''}" style="margin-left:${level * 10}px">`;
-
-		++level;
-		schema.properties.forEach((prop, i) => {
-
-			html += '<div class="prop">';
-
-			if((prop.type === 'object' || prop.type === 'array') && !prop.hasOwnProperty('default')) {
-
-				const id = randomString();
-				html += `<input type="checkbox" checked class="jhtml-view-switcher" id="jhtml-view-switcher-${id}"/>`;
-				html += `<label for="jhtml-view-switcher-${id}"></label>`;
-
-			}
+      if ((prop.type === 'object' || prop.type === 'array') && !prop.hasOwnProperty('default')) {
+        const id = randomString();
+        html += `<input type="checkbox" checked class="jhtml-view-switcher" id="jhtml-view-switcher-${id}"/>`;
+        html += `<label for="jhtml-view-switcher-${id}"></label>`;
+      }
 
 
-			let v = (schema.type === 'object') ? prop.title : i;
-			let cl = '';
-			if(v === '') {
+      let v = (schema.type === 'object') ? prop.title : i;
+      let cl = '';
+      if (v === '') {
+        cl += ' empty';
+        v = '(empty string)';
+      }
+      html += `<span class="${cl}">${v}</span>`;
 
-				cl += ' empty';
-				v = '(empty string)';
+      if (prop.type === 'object' && !prop.hasOwnProperty('default')) {
+        html += ` <span class="key-postfix">{${prop.properties.length}}</span>`;
+      } else if (prop.type === 'array' && !prop.hasOwnProperty('default')) {
+        html += ` <span class="key-postfix">[${prop.properties.length}]</span>`;
+      } else {
+        html += ' <span class="key-postfix">:</span> ';
+      }
 
-			}
-			html += `<span class="${cl}">${v}</span>`;
+      if ((prop.type === 'object' || prop.type === 'array') && !prop.hasOwnProperty('default'))
+        html += _makeDescHandler(prop);
 
-			if(prop.type === 'object' && !prop.hasOwnProperty('default')) {
+      html += makeJHTML(prop, false, level + 1);
+      html += '</div>';
+    });
 
-				html += ` <span class="key-postfix">{${prop.properties.length}}</span>`;
+    if (schema.properties.length <= 0) {
+      html += schema.type === 'object' ? '(empty object)' : '(empty array)';
+    }
 
-			} else if(prop.type === 'array' && !prop.hasOwnProperty('default')) {
-
-				html += ` <span class="key-postfix">[${prop.properties.length}]</span>`;
-
-			} else {
-
-				html += ' <span class="key-postfix">:</span> ';
-
-			}
-
-			if((prop.type === 'object' || prop.type === 'array') && !prop.hasOwnProperty('default'))
-				html += _makeDescHandler(prop);
-
-			html += makeJHTML(prop, false, level);
-			html += '</div>';
-
-		});
-
-		if(schema.properties.length <= 0) {
-			html += schema.type === 'object' ? '(empty object)' : '(empty array)';
-		}
-
-		html += '</div>';
-
-		/*if(isRoot)
-			html += `<div>${(schema.type === 'object') ? '}' : ']'}</div>`;*/
-
-	} else {
-
-		let cl = schema.type === 'object' ? 'null' : schema.type;
-		let v = schema.default;
-		if(schema.default === '') {
-
-			cl += ' empty';
-			v = '(empty string)';
-
-		}
+    html += '</div>';
+  } else {
+    let cl = schema.type === 'object' ? 'null' : schema.type;
+    let v = schema.default;
+    if (schema.default === '') {
+      cl += ' empty';
+      v = '(empty string)';
+    }
 		
-		html += `<span class="${cl}">${v}</span>`;
-		html += _makeDescHandler(schema);
+    html += `<span class="${cl}">${v}</span>`;
+    html += _makeDescHandler(schema);
+  }
 
-	}
+  function _makeDescHandler(prop) {
+    let html = '';
+    html += '<div class="desc-handler">?';
+    html += `<div class="desc">${_makeDescription(prop)}</div>`;
+    html += '</div>';
+    return html;
+  }
 
-	function _makeDescHandler(prop) {
+  function _makeDescription(prop) {
+    return prop.description.replace(/(?:\r\n|\r|\n)/g, '<br />');
+  }
 
-		let html = '';
-		html += '<div class="desc-handler">?';
-		html += `<div class="desc">${_makeDescription(prop)}</div>`;
-		html += '</div>';
-		return html;
-
-	}
-
-	function _makeDescription(prop) {
-
-		return prop.description.replace(/(?:\r\n|\r|\n)/g, '<br />');
-
-	}
-
-	return html;
-
+  return html;
 }
 
 export function isNumeric(n) {
-
-	return !isNaN(parseFloat(n)) && isFinite(n);
-
+  return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
 export function isKeyDuplicate(key, props, keyIndex) {
+  let isDuplicate = false;
 
-	let isDuplicate = false;
+  props.forEach((prop, i) => {
+    if (prop.title === key && i !== keyIndex) isDuplicate = true;
+  });
 
-	props.forEach((prop, i) => {
-
-		if(prop.title === key && i !== keyIndex) isDuplicate = true;
-
-	});
-
-	return isDuplicate;
-
+  return isDuplicate;
 }
 
 export function makeHTMLFile(content) {
-	return `<!DOCTYPE html>
+  return `<!DOCTYPE html>
 					<html lang="en">
 						<head>
 							<meta charset="UTF-8">
@@ -503,7 +386,7 @@ export function makeHTMLFile(content) {
 }
 
 export function makeJHTMLFile(content) {
-	return `<!DOCTYPE html>
+  return `<!DOCTYPE html>
 					<html lang="en">
 						<head>
 							<meta charset="UTF-8">

@@ -1,136 +1,147 @@
-const path    = require('path');
+/* eslint-disable arrow-body-style */
+/* eslint-disable indent */
+/* eslint-disable quotes */
+const path = require('path');
 
 const webpack = require("webpack");
 
-const ExtractTextPlugin   = require("extract-text-webpack-plugin");
-const HtmlWebpackPlugin   = require("html-webpack-plugin");
-const I18nPlugin          = require("i18n-webpack-plugin");
-const Clean               = require('clean-webpack-plugin');
-
-const Autoprefixer        = require('autoprefixer');
-const Stylelint           = require('stylelint');
-const BrowserReporter     = require('postcss-browser-reporter');
-const SimpleVars          = require('postcss-simple-vars');
-const atImport            = require('postcss-import');
-
-const languages = {
-	"en": require(path.join(__dirname, 'src/langs/en.json'))
-};
-
-const isProduction = process.env.NODE_ENV === 'production';
+const MiniCssExtractPlugin	= require('mini-css-extract-plugin');
+const HtmlWebpackPlugin   	= require('html-webpack-plugin');
+const {CleanWebpackPlugin}  = require('clean-webpack-plugin');
+const CopyWebpackPlugin   	= require('copy-webpack-plugin');
+const TerserPlugin 					= require('terser-webpack-plugin');
+const ESLintPlugin 					= require('eslint-webpack-plugin');
 
 
-var options = {
+const isProduction 	= process.env.NODE_ENV === 'production';
+const baseURL 			= process.env.BASEURL || '';
+
+
+const options = {
 	context: path.join(__dirname, 'src'),
-	entry:{
-		app: ['./app.js'],
-		common: [
-			'react',
-			'react-router',
-			'react-dom',
-			'react-addons-pure-render-mixin',
-			'react-tap-event-plugin',
-			'flux',
-			'history',
-			'classnames',
-			'immutable'
-		]
-	},
-	resolve: {
-		extensions: ['', '.jsx', '.js']
-	},
+  entry:{
+    index: './index.js'
+  },
+
 	output: {
-		path: path.join(__dirname, isProduction ? 'docs' : 'build'),
-		filename: "editor.js"
-	},
+    path: path.join(__dirname, isProduction ? 'docs' : 'build'),
+    publicPath: `${baseURL}/`//,
+		//filename: "editor.js"
+  },
+	
+  resolve: {
+	  extensions: ['.jsx', '.js'],
+	  fallback: {
+      stream: false,
+    	crypto: false
+    }
+  },
+
 	watch: !isProduction,
+
 	module: {
-		preLoaders: [
+		rules: [
 			{
-				test: /\.js|.jsx$/,
-				exclude: /node_modules\/(?!gf_components).*|third-party/,
-				loader: "eslint-loader"
-			},
+			  test: /\.css$/,
+			  //exclude: /node_modules/,
+			  use: [
+				  {
+					  loader: MiniCssExtractPlugin.loader
+				  },
+				  { 
+					  loader: 'css-loader',
+					  options: {
+						  modules: {
+                mode: resourcePath => {
+								  return 'local';
+							  },
+                localIdentName: !isProduction ? '[name]--[local]--[hash:base64]' : '[hash:base64:5]'
+						  },
+						  esModule: true
+					  }
+          }
+			  ]
+		  },
 			{
-				test: /\.css$/,
-				exclude: /node_modules\/(?!gf_components).*|third-party/,
-				loader: "postcss-loader"
-			}
-		],
-		loaders: [
-			{
-				test: /\.css$/,
-				exclude: /node_modules\/(?!gf_components).*/,
-				loader: ExtractTextPlugin.extract('style-loader', 'css-loader?'+(!isProduction ? 'localIdentName=[name]--[local]--[hash:base64]&' : 'localIdentName=[hash:base64:3]&')+'&'+(isProduction ? 'minimize' : 'sourceMap')+'!postcss-loader')
-			},
-			{
-				test: /\.js|.jsx?$/,
-				exclude: /node_modules\/(?!gf_components).*/,
-				loader: 'babel-loader',
-				query: {
-					presets: ['es2015', 'react']
-				}
-			},
-			{
-				test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-				exclude: /node_modules/,
-				loader: "url-loader?limit=10000&minetype=application/font-woff&name=[path][name].[ext]"
-			},
-			{
-				test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-				exclude: /node_modules/,
-				loader: "file-loader?name=[path][name].[ext]"
-			},
-			{
-				test: /\.(png|gif)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-				exclude: /node_modules\/(?!gf_components).*/,
-				loader: "url-loader?limit=5000&name=[path][name].[ext]"
-			}
+			  test: /\.js|.jsx?$/,
+			  exclude: /node_modules/,
+			  loader: 'babel-loader',
+			  options: {
+				  presets: ['@babel/preset-react']
+			  }
+		  },
+      {
+        test: /\.(png|svg|jpg|gif|webp)$/,
+			  type: 'asset/resource',
+			  generator: {
+				  filename: '[path][name].[ext]'
+			  }
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/,
+			  type: 'asset/resource',
+			  generator: {
+				  filename: '[path][name].[ext]'
+			  }
+      }
 		]
 	},
+
 	plugins: [
-		new ExtractTextPlugin('application.css'),
-		new webpack.optimize.DedupePlugin(),
-		new I18nPlugin(
-			languages['en']
-		),
-		new webpack.DefinePlugin({
-			'process.env': {
-				NODE_ENV: JSON.stringify(process.env.NODE_ENV)
-			}
-		}),
-		new webpack.optimize.CommonsChunkPlugin('common', 'common.js'),
-		new webpack.optimize.UglifyJsPlugin({minimize: true, compress: {warnings: false}}),
-		new webpack.optimize.OccurenceOrderPlugin(),
-		new HtmlWebpackPlugin({
-			filename: 'index.html',
-			template: 'src/index.html'
-		}),
-		new Clean(['build'])
-	],
-	debug: !isProduction,
+	  new MiniCssExtractPlugin({
+		  filename: 'styles/[name].css'
+	  }),
+	  new HtmlWebpackPlugin({
+      publicPath: `${baseURL}/`,
+		  filename: './index.html',
+		  template: './index.html',
+		  chunks: ['index', 'common'],
+		  title: 'JSONDocs'
+	  }),
+	  new CleanWebpackPlugin(),
+	  /*new CopyWebpackPlugin({
+		  patterns: [
+		    {from: 'assets', to: ''}
+	    ]
+	  }),*/
+	  new webpack.LoaderOptionsPlugin({
+		  options: {
+			  debug: !isProduction,
+			  minimize: true
+		  }
+	  }),
+    new ESLintPlugin({
+		  context: __dirname,
+		  extensions: ['js', 'jsx'],
+	    emitError: true,
+	    failOnError: true,
+	    quiet: true,
+		  outputReport: false
+    })
+  ],
 
-	devServer:{
-		host: '0.0.0.0',
-		port: '8088',
-		https: true,
-		contentBase: path.join(__dirname, 'src'),
-		hot: true
-	},
-
-	eslint: {
-		emitError: true,
-		failOnError: true,
-		quiet: true
-	},
-
-	postcss: function () { //Stylelint(),
-		return [atImport, SimpleVars, Autoprefixer, BrowserReporter];
-	}
+	optimization: {
+	  /*splitChunks: {
+		  chunks: 'all',
+		  minChunks: 2,
+		  minSize: 500,
+		  filename: './scripts/common.js',
+		  name: 'common'
+	  },*/
+	  minimize: isProduction,
+	  minimizer: [new TerserPlugin({
+		  terserOptions: {
+			  'keep_fnames': true,
+			  safari10: true
+		  }
+	  })]
+  }
 };
 
-if(!isProduction){
-	options.devtool = 'eval'; // for style debug 'inline-source-map'
+if (!isProduction) {
+  options.devtool = 'inline-source-map'; // for style debug 'inline-source-map'
+} else {
+  options.plugins.push(new CleanWebpackPlugin());
 }
 
 module.exports = options;
