@@ -30,11 +30,18 @@
  *
  *
  */
+export const Types = {
+  OBJECT: 'object',
+  ARRAY:  'array',
+  VALUE:  'value'
+};
+
 export function parser(_json, desc) {
   const schema = {
     'title': 'Schema',
     'type': null,
-    'description': ''
+    'description': '',
+    'id': '0'
   };
 
   let json = _json;
@@ -45,16 +52,15 @@ export function parser(_json, desc) {
     return null;
   }
 
+  schema.properties = [];
   schema.description = desc.toString();
 
   if (Array.isArray(json)) {
     schema.type = 'array';
-    schema.properties = [];
     json.forEach((p, i) => {
-      schema.properties.push(_convertProperty(p));
+      schema.properties.push(_convertProperty(p, i.toString()));
     });
   } else {
-    schema.properties = [];
     schema.type = 'object';
     for (const key in json) {
       schema.properties.push(_convertProperty(json[key], key));
@@ -73,26 +79,22 @@ export function parser(_json, desc) {
  */
 export function _convertProperty(prop, propName) {
   const cProp = {
-    'description': ''
+    'description': '',
+    'title': propName,
+    'properties': []
   };
-
-  if (propName !== undefined) {
-    cProp.title = propName;
-  }
 
   if (typeof prop === 'object') {
     if (Array.isArray(prop)) {
       cProp.type = 'array';
-      cProp.properties = [];
       prop.forEach((p, i) => {
-        cProp.properties.push(_convertProperty(p));
+        cProp.properties.push(_convertProperty(p, i.toString()));
       });
     }	else {
       cProp.type = 'object';
       if (prop === null) {
         cProp.default = prop;
       } else {
-        cProp.properties = [];
         for (const key in prop) {
           cProp.properties.push(_convertProperty(prop[key], key));
         }
@@ -293,11 +295,11 @@ export function isNumeric(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
-export function isKeyDuplicate(key, props, keyIndex) {
+export function isKeyDuplicate(key, props = []) {
   let isDuplicate = false;
 
-  props.forEach((prop, i) => {
-    if (prop.title === key && i !== keyIndex) isDuplicate = true;
+  props.forEach(prop => {
+    if (prop.title === key) isDuplicate = true;
   });
 
   return isDuplicate;

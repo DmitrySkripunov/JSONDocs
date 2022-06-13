@@ -5,7 +5,7 @@ import Editor from './Editor';
 export default function App () {
   const [inputJson, setInputJSON] = useState('{"address":{"streetAddress":"21 2nd Street","city":"New York"},"phoneNumber":[{"location":"home","code":44, "test":{"first": 1, "two":null}}]}');
   // eslint-disable-next-line max-len
-  const [inputSchema, setInputSchema] = useState('{"title":"Schema","type":"object","description":"","properties":[{"description":"","title":"address","type":"object","properties":[{"description":"","title":"streetAddress","type":"string","default":"21 2nd Street"},{"description":"","title":"city","type":"string","default":"New York"}]},{"description":"","title":"phoneNumber","type":"array","properties":[{"description":"","type":"object","properties":[{"description":"","title":"location","type":"string","default":"home"},{"description":"","title":"code","type":"number","default":44},{"description":"","title":"test","type":"object","properties":[{"description":"","title":"first","type":"number","default":1},{"description":"","title":"two","type":"object","default":null}]}]}]}]}');
+  const [inputSchema, setInputSchema] = useState('{"title":"Schema","type":"object","description":"","properties":[{"description":"","title":"address","type":"object","properties":[{"description":"","title":"streetAddress","type":"string","default":"21 2nd Street"},{"description":"","title":"city","type":"string","default":"New York"}]},{"description":"","title":"phoneNumber","type":"array","properties":[{"title": "0", "description":"","type":"object","properties":[{"description":"","title":"location","type":"string","default":"home"},{"description":"","title":"code","type":"number","default":44},{"description":"","title":"test","type":"object","properties":[{"description":"","title":"first","type":"number","default":1},{"description":"","title":"two","type":"null","default":null}]}]}]}]}');
   const [result, setResult] = useState('');
   const [mode, setMode] = useState('view');
   const [schema, setSchema] = useState();
@@ -110,18 +110,18 @@ export default function App () {
           <textarea value={inputJson} onChange={changeInputJSON} />
           <div className="btns">
             <button onClick={onMakeJSON} value="json">Make JSON</button>
-            <button onClick={onMakeSchema} value="json">Make Schema</button>
+            <button onClick={onMakeSchema} value="json">Make doc</button>
             <button onClick={onMakeHTML} value="json">Make HTML</button>
             <button onClick={onMakeJHTML} value="json">Make JHTML</button>
           </div>
         </div>
 
         <div>
-          <h2>Load schema</h2>
+          <h2>Load doc</h2>
           <textarea value={inputSchema} onChange={changeInputSchema} />
           <div className="btns">
             <button onClick={onMakeJSON} value="schema">Make JSON</button>
-            <button onClick={onMakeSchema} value="schema">Make Schema</button>
+            <button onClick={onMakeSchema} value="schema">Make doc</button>
             <button onClick={onMakeHTML} value="schema">Make HTML</button>
             <button onClick={onMakeJHTML} value="schema">Make JHTML</button>
           </div>

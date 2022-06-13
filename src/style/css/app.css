@@ -222,6 +222,7 @@ textarea{
     color: #aaa;
     cursor: pointer;
     position: relative;
+    margin-top: 20px;
 }
 .edithandler:after{
     content: 'H';
@@ -236,12 +237,12 @@ textarea{
     color: #000000;
 }
 
-.edithandler > .edit-menu{
-    display: none;
-}
-
-.edithandler:hover > .edit-menu{
-    display: flex;
+.click-outside {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
 }
 
 .edit-menu{
@@ -249,7 +250,7 @@ textarea{
     background: #ffffff;
     box-shadow: 1px 2px 8px #000000;
     list-style: none;
-    display: none;
+    display: block;
     margin: 0;
     padding: 0;
     font-family: monospace, sans-serif;

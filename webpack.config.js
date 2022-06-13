@@ -53,11 +53,11 @@ const options = {
 					  options: {
 						  modules: {
                 mode: resourcePath => {
-								  return 'local';
+								  return 'global';
 							  },
                 localIdentName: !isProduction ? '[name]--[local]--[hash:base64]' : '[hash:base64:5]'
 						  },
-						  esModule: true
+						  esModule: false
 					  }
           }
 			  ]
