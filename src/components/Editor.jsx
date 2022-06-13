@@ -11,42 +11,47 @@ export default function Editor (props) {
 
   if (schema === undefined || schema.type === undefined) return null;
 
-
-  /*const propsView 		= globalSchema.properties !== undefined ? _makeProps(globalSchema) : null;
-  let value						= globalSchema.type === 'object' ? `Object {${globalSchema.properties.length}}` : `Array [${globalSchema.properties.length}]`;
-  value = <span className="key-postfix">{value}</span>;
-
-  const onclick = evt => {
+  const onClick = evt => {
     const errors = document.querySelectorAll('.keyerror');
     if (errors.length <= 0) {
-      props.onSave(globalSchema);
+      props.onSave(schema);
     } else {
       alert('JSON has errors!');
     }
-  };*/
+  };
 
   return (
     <div className="results">
-      <Property schema={schema} isRoot parent={{}} />
+      <Property schema={schema} isRoot />
 
       <div className="edit-btns">
-        <button onClick={onclick}>Save</button>
+        <button onClick={onClick}>Save</button>
       </div>
     </div>
   );
 };
 
-function Property({schema, isRoot, parent}) {
+function Property({schema, isRoot, parent = {}, propertyIndex = 0}) {
   const [isMenu, setIsMenu] = useState(false);
 
   const showMenu = evt => {
+    const rect = evt.currentTarget.getBoundingClientRect();
     setIsMenu({
-      left: `${evt.currentTarget.offsetLeft}px`,
-      top:  `${evt.currentTarget.offsetTop}px`
+      left: `${rect.left}px`,
+      top:  `${rect.top}px`
     });
   };
 
   const onMenuAction = action => {
+    switch (action) {
+      case 'insert-array': break;
+      case 'insert-object': break;
+      case 'insert-value': break;
+      case 'duplicate': break;
+      case 'remove': 
+        parent.properties.splice(propertyIndex, 1);
+        break;
+    }
     setIsMenu(false);
   };
 
@@ -55,41 +60,54 @@ function Property({schema, isRoot, parent}) {
   if (!schema.id) schema.id = nanoid();
   const id = schema.id;
 
-
-  const cs = classnames('props', {
-    'empty-object' : schema?.properties?.length === 0
-  });
-
-  let children = schema.type === Types.OBJECT ? '(empty object)' : '(empty array)';
+  let children = null;
+  if (schema.type === Types.OBJECT) {
+    children = <div className="props empty-object">(empty object)</div>;
+  } else if (schema.type === Types.ARRAY) {
+    children = <div className="props empty-object">(empty array)</div>;
+  }
 
 
   if (schema.properties && schema.properties.length > 0) {
-    children = schema.properties.map(property => <Property key={nanoid()} schema={property} parent={schema}/>);
+    children = schema.properties.map((property, i) => <Property key={nanoid()} schema={property} parent={schema} propertyIndex={i}/>);
   }
 
+  const insertable = schema.type === 'object' || schema.type === 'array';
+
+  const onChangeDescription = evt => {
+    schema.description = evt.target.value;
+  };
+
   return (
-    <div className={cs}>
+    <div className="props">
       <div className="edithandler" onClick={showMenu} />
-      {isMenu ? <Menu style={isMenu} onAction={onMenuAction} onClose={closeMenu} isRoot={isRoot} /> : null}
+      {isMenu ? <Menu style={isMenu} onAction={onMenuAction} onClose={closeMenu} isRoot={isRoot} insertable={insertable} /> : null}
       
-      <input type="checkbox" className="jhtml-view-switcher" id={`jhtml-view-switcher-${id}`} />
-      <label  htmlFor={`jhtml-view-switcher-${id}`} />
+      {children ? <input type="checkbox" className="jhtml-view-switcher" id={`jhtml-view-switcher-${id}`} /> : null}
+      {children ? <label  htmlFor={`jhtml-view-switcher-${id}`} /> : null}
 
       <PropertyLabel schema={schema} parent={parent}/>
+
+      <div className="desc-handler">
+        ?
+        <div className="desc">
+          <Textarea style={{width: '95%'}} defaultValue={schema.description} onChange={onChangeDescription} />
+        </div>
+      </div>
 
       {children}
     </div>
   );
 }
 
-function Menu({isRoot, style, onAction, onClose}) {
+function Menu({isRoot, insertable = false, style, onAction, onClose}) {
   return (
     <Portal>
       <div className="click-outside" onClick={onClose}>
         <ul className="edit-menu" style={style}>
-          <li onClick={_ => onAction('insert-array')}>Insert Array</li>
-          <li onClick={_ => onAction('insert-object')}>Insert Object</li>
-          <li onClick={_ => onAction('insert-value')}>Insert Value</li>
+          {insertable ? <li onClick={_ => onAction('insert-array')}>Insert Array</li> : null}
+          {insertable ? <li onClick={_ => onAction('insert-object')}>Insert Object</li> : null}
+          {insertable ? <li onClick={_ => onAction('insert-value')}>Insert Value</li> : null}
           {!isRoot ? <li onClick={_ => onAction('duplicate')}>Duplicate</li> : null}
           {!isRoot ? <li onClick={_ => onAction('remove')}>Remove</li> : null}
         </ul>
@@ -138,7 +156,6 @@ function PropertyLabel({schema, parent}) {
 
   let postfixValue = undefined;
   if (schema.type === Types.OBJECT) {
-    console.log(schema.title);
     postfixValue = ` {${schema.properties.length}}`;
   }	else if (schema.type === Types.ARRAY) {
     postfixValue = ` [${schema.properties.length}]`;

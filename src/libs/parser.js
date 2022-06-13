@@ -296,13 +296,13 @@ export function isNumeric(n) {
 }
 
 export function isKeyDuplicate(key, props = []) {
-  let isDuplicate = false;
+  let isDuplicate = 0;
 
   props.forEach(prop => {
-    if (prop.title === key) isDuplicate = true;
+    if (prop.title === key) isDuplicate++;
   });
 
-  return isDuplicate;
+  return isDuplicate > 1;
 }
 
 export function makeHTMLFile(content) {

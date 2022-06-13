@@ -5,7 +5,7 @@ import Editor from './Editor';
 export default function App () {
   const [inputJson, setInputJSON] = useState('{"address":{"streetAddress":"21 2nd Street","city":"New York"},"phoneNumber":[{"location":"home","code":44, "test":{"first": 1, "two":null}}]}');
   // eslint-disable-next-line max-len
-  const [inputSchema, setInputSchema] = useState('{"title":"Schema","type":"object","description":"","properties":[{"description":"","title":"address","type":"object","properties":[{"description":"","title":"streetAddress","type":"string","default":"21 2nd Street"},{"description":"","title":"city","type":"string","default":"New York"}]},{"description":"","title":"phoneNumber","type":"array","properties":[{"title": "0", "description":"","type":"object","properties":[{"description":"","title":"location","type":"string","default":"home"},{"description":"","title":"code","type":"number","default":44},{"description":"","title":"test","type":"object","properties":[{"description":"","title":"first","type":"number","default":1},{"description":"","title":"two","type":"null","default":null}]}]}]}]}');
+  const [inputSchema, setInputSchema] = useState('{"title":"Schema","type":"object","description":"","properties":[{"description":"","title":"address","type":"object","properties":[{"description":"","title":"streetAddress","type":"string","default":"21 2nd Street"},{"description":"","title":"city","type":"string","default":"New York"}]},{"description":"","title":"phoneNumber","type":"array","properties":[{"title":"0","description":"","type":"object","properties":[{"description":"","title":"empty array","type":"array","properties":[]},{"description":"","title":"empty object","type":"object","properties":[]},{"description":"","title":"location","type":"string","default":"home"},{"description":"","title":"code","type":"number","default":44},{"description":"","title":"test","type":"object","properties":[{"description":"","title":"first","type":"number","default":1},{"description":"","title":"two","type":"null","default":null}]}]}]}]}');
   const [result, setResult] = useState('');
   const [mode, setMode] = useState('view');
   const [schema, setSchema] = useState();
@@ -35,6 +35,7 @@ export default function App () {
   const download = type && mode !== 'edit' ? <a href={file} download={downloadName}>{downloadName}</a> : null;
 
   const onSave = schema => {
+    console.log(schema);
     setInputJSON(JSON.stringify(makeJSON(schema)));
     setInputSchema(JSON.stringify(schema));
   };
