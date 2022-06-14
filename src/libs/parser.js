@@ -295,14 +295,13 @@ export function isNumeric(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
-export function isKeyDuplicate(key, props = []) {
-  let isDuplicate = 0;
+export function isKeyDuplicate(key, props = [], propIndex) {
+  for (let i = 0; i < props.length; i++) {
+    if (i === propIndex) continue;
+    if (props[i].title === key) return true; 
+  }
 
-  props.forEach(prop => {
-    if (prop.title === key) isDuplicate++;
-  });
-
-  return isDuplicate > 1;
+  return false;
 }
 
 export function makeHTMLFile(content) {

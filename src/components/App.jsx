@@ -2,13 +2,21 @@
 import {parser, makeJSON, makeHTML, makeJHTML, syntaxHighlight, makeHTMLFile, makeJHTMLFile} from '../libs/parser';
 import Editor from './Editor';
 
+import testJSON from '../test-json.json';
+import testSchema from '../test-schema.json';
+import {useStoreon} from 'storeon/react';
+import Actions from '../stores/actions';
+
 export default function App () {
-  const [inputJson, setInputJSON] = useState('{"address":{"streetAddress":"21 2nd Street","city":"New York"},"phoneNumber":[{"location":"home","code":44, "test":{"first": 1, "two":null}}]}');
-  // eslint-disable-next-line max-len
-  const [inputSchema, setInputSchema] = useState('{"title":"Schema","type":"object","description":"","properties":[{"description":"","title":"address","type":"object","properties":[{"description":"","title":"streetAddress","type":"string","default":"21 2nd Street"},{"description":"","title":"city","type":"string","default":"New York"}]},{"description":"","title":"phoneNumber","type":"array","properties":[{"title":"0","description":"","type":"object","properties":[{"description":"","title":"empty array","type":"array","properties":[]},{"description":"","title":"empty object","type":"object","properties":[]},{"description":"","title":"location","type":"string","default":"home"},{"description":"","title":"code","type":"number","default":44},{"description":"","title":"test","type":"object","properties":[{"description":"","title":"first","type":"number","default":1},{"description":"","title":"two","type":"null","default":null}]}]}]}]}');
+  const [inputJson, setInputJSON]     = useState(JSON.stringify(testJSON));
+  const [inputSchema, setInputSchema] = useState(JSON.stringify(testSchema));
+
+  const {dispatch} = useStoreon('editor');
+  const [schema, setSchema] = useState();
+
   const [result, setResult] = useState('');
   const [mode, setMode] = useState('view');
-  const [schema, setSchema] = useState();
+  
   const [type, setType] = useState();
 
   let downloadName = '';
@@ -35,23 +43,17 @@ export default function App () {
   const download = type && mode !== 'edit' ? <a href={file} download={downloadName}>{downloadName}</a> : null;
 
   const onSave = schema => {
-    console.log(schema);
     setInputJSON(JSON.stringify(makeJSON(schema)));
     setInputSchema(JSON.stringify(schema));
   };
 
-  const changeInputJSON = evt => {
-    setInputJSON(evt.target.value);
-  };
-
-  const changeInputSchema = evt => {
-    setInputSchema(evt.target.value);
-  };
+  const changeInputJSON   = evt => setInputJSON(evt.target.value);
+  const changeInputSchema = evt => setInputSchema(evt.target.value);
 
   const getSchema = evt => {
     const testJSON = evt.target.value === 'json' ? inputJson : inputSchema;
 
-    return evt.target.value !== 'json' ? JSON.parse(testJSON) : parser(testJSON, 'test json');
+    return evt.target.value !== 'json' ? JSON.parse(testJSON) : parser(testJSON, 'json doc');
   };
 
   const onMakeJSON = evt => {
@@ -60,6 +62,7 @@ export default function App () {
     if (schema !== null) {
       setResult(`<pre>${syntaxHighlight(JSON.stringify(makeJSON(schema), undefined, 4))}</pre>`);
       setSchema(schema);
+      dispatch(Actions.SETUP_SCHEMA, schema);
       setType('json');
     }
   };
@@ -70,6 +73,7 @@ export default function App () {
     if (schema !== null) {
       setResult(JSON.stringify(schema));
       setSchema(schema);
+      dispatch(Actions.SETUP_SCHEMA, schema);
       setType('schema');
     }
   };
@@ -80,6 +84,7 @@ export default function App () {
     if (schema !== null) {
       setResult(makeHTML(schema));
       setSchema(schema);
+      dispatch(Actions.SETUP_SCHEMA, schema);
       setType('html');
     }
   };
@@ -90,6 +95,7 @@ export default function App () {
     if (schema !== null) {
       setResult(makeJHTML(schema));
       setSchema(schema);
+      dispatch(Actions.SETUP_SCHEMA, schema);
       setType('jhtml');
     }
   };
@@ -111,7 +117,7 @@ export default function App () {
           <textarea value={inputJson} onChange={changeInputJSON} />
           <div className="btns">
             <button onClick={onMakeJSON} value="json">Make JSON</button>
-            <button onClick={onMakeSchema} value="json">Make doc</button>
+            <button onClick={onMakeSchema} value="json">Make text doc</button>
             <button onClick={onMakeHTML} value="json">Make HTML</button>
             <button onClick={onMakeJHTML} value="json">Make JHTML</button>
           </div>
@@ -122,7 +128,7 @@ export default function App () {
           <textarea value={inputSchema} onChange={changeInputSchema} />
           <div className="btns">
             <button onClick={onMakeJSON} value="schema">Make JSON</button>
-            <button onClick={onMakeSchema} value="schema">Make doc</button>
+            <button onClick={onMakeSchema} value="schema">Make text doc</button>
             <button onClick={onMakeHTML} value="schema">Make HTML</button>
             <button onClick={onMakeJHTML} value="schema">Make JHTML</button>
           </div>

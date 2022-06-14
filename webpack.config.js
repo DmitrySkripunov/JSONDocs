@@ -63,7 +63,7 @@ const options = {
 			  ]
 		  },
 			{
-			  test: /\.js|.jsx?$/,
+			  test: /\.(js|jsx)$/,
 			  exclude: /node_modules/,
 			  loader: 'babel-loader',
 			  options: {
@@ -80,6 +80,13 @@ const options = {
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/,
 			  type: 'asset/resource',
+			  generator: {
+				  filename: '[path][name].[ext]'
+			  }
+      },
+      {
+        test: /\.json$/,
+			  type: 'json',
 			  generator: {
 				  filename: '[path][name].[ext]'
 			  }

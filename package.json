@@ -48,7 +48,8 @@
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "react-textarea-autosize": "8.3.4",
-    "nanoid": "4.0.0"
+    "nanoid": "4.0.0",
+    "storeon": "3.1.5"
   },
   "browserslist": [
     "last 3 versions",
