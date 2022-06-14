@@ -1,4 +1,4 @@
-import Portal from './Portal';
+import Portal from '../Portal';
 
 export default function Menu({isRoot, insertable = false, style, onAction, onClose}) {
   return (

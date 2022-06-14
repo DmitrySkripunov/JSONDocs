@@ -1,6 +1,6 @@
 ﻿import React, {useState} from 'react';
 import {parser, makeJSON, makeHTML, makeJHTML, syntaxHighlight, makeHTMLFile, makeJHTMLFile} from '../libs/parser';
-import Editor from './Editor';
+import Editor from './editor/Editor';
 
 import testJSON from '../test-json.json';
 import testSchema from '../test-schema.json';

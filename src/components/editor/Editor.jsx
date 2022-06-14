@@ -1,6 +1,4 @@
-﻿import React, {useEffect, useState} from 'react';
-import {isKeyDuplicate, isNumeric, makeJSON, Types} from '../libs/parser';
-import classnames from 'classnames';
+﻿import React, {useState} from 'react';
 import Property from './Property';
 
 export default function Editor (props) {

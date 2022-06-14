@@ -3,7 +3,7 @@ import Textarea from 'react-textarea-autosize';
 import Menu from './Menu';
 import PropertyLabel from './PropertyLabel';
 import {nanoid} from 'nanoid';
-import {Types} from '../libs/parser';
+import {Types} from '../../libs/parser';
 
 export default function Property({schema, isRoot, parent = {}, propertyIndex = 0, propertyPath = []}) {
   const [isMenu, setIsMenu] = useState(false);
