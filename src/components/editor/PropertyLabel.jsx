@@ -1,6 +1,8 @@
 import React from 'react';
 import {useState} from 'react';
+import {useStoreon} from 'storeon/react';
 import {Types, isKeyDuplicate} from '../../libs/parser';
+import Actions from '../../stores/actions';
 import Postfix from './Postfix';
 import PropertyValue from './PropertyValue';
 
@@ -8,6 +10,7 @@ export default function PropertyLabel({schema, parent, propertyPath = []}) {
   const [key]           = useState(schema.title);
   const [type, setType] = useState(schema.type);
   const [value]         = useState(schema.default);
+  const {dispatch}      = useStoreon();
 
   const onKeyInput = evt => {
     const target  = evt.currentTarget;
@@ -20,6 +23,8 @@ export default function PropertyLabel({schema, parent, propertyPath = []}) {
       target.classList.remove('keyerror');
       target.title = '';
     }
+
+    dispatch(Actions.UPDATE_KEY, {key: value, path: propertyPath});
   };
 
   const onKeyDown = evt => {
@@ -38,6 +43,7 @@ export default function PropertyLabel({schema, parent, propertyPath = []}) {
 
   const changeValue = value => {
     setType(value.type);
+    dispatch(Actions.UPDATE_VALUE, {value: value.default, type: value.type, path: propertyPath});
   };
 
 
