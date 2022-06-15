@@ -14,7 +14,7 @@ export function editor (store) {
       o.title = key;
     });
     
-    return nextState;
+    return {schema: nextState};
   });
 
   store.on(Actions.UPDATE_VALUE, ({schema}, {value, type, path}) => {
@@ -25,19 +25,19 @@ export function editor (store) {
       o.type    = type;
     });
 
-    return nextState;
+    return {schema: nextState};
   });
 
   store.on(Actions.INSERT_VALUE, ({schema}, {value, path}) => {
     const o = getProperty(schema, path);
 
-    return schema;
+    return {schema: nextState};
   });
 
   store.on(Actions.REMOVE, ({schema}, {path, propertyIndex}) => {
     const o = getProperty(schema, path);
 
-    return schema;
+    return {schema: nextState};
   });
 }
 

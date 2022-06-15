@@ -1,9 +1,7 @@
 ﻿import React, {useState} from 'react';
 import Property from './Property';
 
-export default function Editor (props) {
-  const [schema, setSchema] = useState(props.schema);
-
+export default function Editor ({schema, ...props}) {
   if (schema === undefined || schema.type === undefined) return null;
 
   const onClick = evt => {

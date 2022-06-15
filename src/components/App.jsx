@@ -12,8 +12,7 @@ export default function App () {
   const [inputJson, setInputJSON]     = useState(JSON.stringify(testJSON));
   const [inputSchema, setInputSchema] = useState(JSON.stringify(testSchema));
 
-  const {dispatch} = useStoreon('editor');
-  const [schema, setSchema] = useState();
+  const {dispatch, schema} = useStoreon('schema');
 
   const [result, setResult] = useState('');
   const [mode, setMode] = useState('view');
@@ -58,12 +57,11 @@ export default function App () {
     return evt.target.value !== 'json' ? JSON.parse(testJSON) : parser(testJSON, 'json doc');
   };
 
+  console.log(schema);
   const onMakeJSON = evt => {
     const schema = getSchema(evt);
-
     if (schema !== null) {
       setResult(`<pre>${syntaxHighlight(JSON.stringify(makeJSON(schema), undefined, 4))}</pre>`);
-      setSchema(schema);
       dispatch(Actions.SETUP_SCHEMA, schema);
       setType('json');
     }
@@ -74,7 +72,6 @@ export default function App () {
 
     if (schema !== null) {
       setResult(JSON.stringify(schema));
-      setSchema(schema);
       dispatch(Actions.SETUP_SCHEMA, schema);
       setType('schema');
     }
@@ -85,7 +82,6 @@ export default function App () {
 
     if (schema !== null) {
       setResult(makeHTML(schema));
-      setSchema(schema);
       dispatch(Actions.SETUP_SCHEMA, schema);
       setType('html');
     }
@@ -96,7 +92,6 @@ export default function App () {
 
     if (schema !== null) {
       setResult(makeJHTML(schema));
-      setSchema(schema);
       dispatch(Actions.SETUP_SCHEMA, schema);
       setType('jhtml');
     }

@@ -1,5 +1,4 @@
 import React from 'react';
-import {useState} from 'react';
 import {useStoreon} from 'storeon/react';
 import {Types, isKeyDuplicate} from '../../libs/parser';
 import Actions from '../../stores/actions';
@@ -7,9 +6,9 @@ import Postfix from './Postfix';
 import PropertyValue from './PropertyValue';
 
 export default function PropertyLabel({schema, parent, propertyPath = []}) {
-  const [key]           = useState(schema.title);
-  const [type, setType] = useState(schema.type);
-  const [value]         = useState(schema.default);
+  const key   = schema.title;
+  const type  = schema.type;
+  const value = schema.default;
   const {dispatch}      = useStoreon();
 
   const onKeyInput = evt => {
