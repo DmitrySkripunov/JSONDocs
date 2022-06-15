@@ -2,6 +2,7 @@ import React from 'react';
 import {useStoreon} from 'storeon/react';
 import {Types, isKeyDuplicate} from '../../libs/parser';
 import Actions from '../../stores/actions';
+import AutosizeInput from '../AutosizeInput';
 import Postfix from './Postfix';
 import PropertyValue from './PropertyValue';
 
@@ -12,8 +13,8 @@ export default function PropertyLabel({schema, parent, propertyPath = []}) {
   const {dispatch}      = useStoreon();
 
   const onKeyInput = evt => {
-    const target  = evt.currentTarget;
-    const value   = target.innerText;
+    const target  = evt.target;
+    const value   = target.value;
 
     if (isKeyDuplicate(value, parent.properties, propertyPath[propertyPath.length - 1])) {
       target.title = 'The key is duplicated!';
@@ -45,10 +46,9 @@ export default function PropertyLabel({schema, parent, propertyPath = []}) {
     dispatch(Actions.UPDATE_VALUE, {value: value.default, type: value.type, path: propertyPath});
   };
 
-
   return (
     <>
-      <span
+      {/*<span
         onInput={onKeyInput}
         onKeyDown={onKeyDown}
         placeholder="field"
@@ -57,7 +57,21 @@ export default function PropertyLabel({schema, parent, propertyPath = []}) {
         contentEditable={parent.type !== Types.ARRAY}
         suppressContentEditableWarning >
         {key}
-      </span>
+  </span>*/}
+      {/*<input 
+        type="text"
+        value={key} 
+        readOnly={parent.type === Types.ARRAY} 
+        onChange={onKeyInput}
+        placeholder="field" 
+/>*/}
+      <AutosizeInput 
+        value={key}
+        inputClassName={cs} 
+        readOnly={parent.type === Types.ARRAY} 
+        onChange={onKeyInput}
+        placeholder="field"
+      />
 
       <Postfix type={type} count={schema?.properties?.length}/>
 

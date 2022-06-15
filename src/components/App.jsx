@@ -57,7 +57,6 @@ export default function App () {
     return evt.target.value !== 'json' ? JSON.parse(testJSON) : parser(testJSON, 'json doc');
   };
 
-  console.log(schema);
   const onMakeJSON = evt => {
     const schema = getSchema(evt);
     if (schema !== null) {

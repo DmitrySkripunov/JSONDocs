@@ -177,29 +177,19 @@ textarea{
 }
 
 .editablekey{
-    padding: 2px;
+    padding: 5px;
+    border: none;
+    font-size: 16px;
 }
 .editablekey:hover,
 .editablekey:focus{
     background: yellow;
 }
 
-[contenteditable=true]:empty:before{
-    content: attr(placeholder);
-}
-
-[contenteditable=true]:empty{
+.editablekey:placeholder-shown {
     color: #bbbbbb;
     border: 1px dashed #bbbbbb;
     border-radius: 3px;
-}
-
-[contenteditable=true]:empty:hover, [contenteditable=true]:empty:focus {
-    padding: 3px;
-}
-
-[contenteditable=true]:hover, [contenteditable=true]:focus{
-    border: none;
 }
 
 .keyerror:after{

@@ -2,7 +2,7 @@
 import Property from './Property';
 
 export default function Editor ({schema, ...props}) {
-  if (schema === undefined || schema.type === undefined) return null;
+  if (schema === undefined || schema?.type === undefined) return null;
 
   const onClick = evt => {
     const errors = document.querySelectorAll('.keyerror');
