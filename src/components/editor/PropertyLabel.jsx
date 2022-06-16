@@ -1,6 +1,6 @@
 import React from 'react';
 import {useStoreon} from 'storeon/react';
-import {Types, isKeyDuplicate} from '../../libs/parser';
+import {Types} from '../../libs/parser';
 import Actions from '../../stores/actions';
 import AutosizeInput from '../AutosizeInput';
 import Postfix from './Postfix';
@@ -25,12 +25,6 @@ export default function PropertyLabel({schema, parent, propertyPath = []}) {
     }
 
     dispatch(Actions.UPDATE_KEY, {key: value, path: propertyPath});
-  };
-
-  const onKeyDown = evt => {
-    if (evt.keyCode === 13) {
-      evt.preventDefault();
-    }
   };
 
   let cs = parent.type !== Types.ARRAY ? 'editablekey' : '';
@@ -78,4 +72,14 @@ export default function PropertyLabel({schema, parent, propertyPath = []}) {
       <PropertyValue type={type} value={value} onChange={changeValue}/>
     </>
   );
+}
+
+function isKeyDuplicate(key, props, keyIndex) {
+  let isDuplicate = false;
+
+  props.forEach((prop, i) => {
+    if (prop.title === key && i !== keyIndex) isDuplicate = true;
+  });
+
+  return isDuplicate;
 }

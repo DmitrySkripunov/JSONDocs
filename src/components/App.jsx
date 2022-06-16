@@ -1,5 +1,6 @@
 ﻿import React, {useState} from 'react';
-import {parser, makeJSON, makeHTML, makeJHTML, syntaxHighlight, makeHTMLFile, makeJHTMLFile} from '../libs/parser';
+import {parser} from '../libs/parser';
+import {makeJSON, makeHTML, makeJHTML, syntaxHighlight, makeHTMLFile, makeJHTMLFile} from '../libs/maker';
 import Editor from './editor/Editor';
 
 import testJSON from '../test-json.json';
@@ -54,7 +55,7 @@ export default function App () {
   const getSchema = evt => {
     const testJSON = evt.target.value === 'json' ? inputJson : inputSchema;
 
-    return evt.target.value !== 'json' ? JSON.parse(testJSON) : parser(testJSON, 'json doc');
+    return evt.target.value !== 'json' ? JSON.parse(testJSON) : parser(testJSON, 'JSON Title', 'JSON Description');
   };
 
   const onMakeJSON = evt => {

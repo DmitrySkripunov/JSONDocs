@@ -1,5 +1,5 @@
 import React from 'react';
-import {Types, isNumeric} from '../../libs/parser';
+import {Types} from '../../libs/parser';
 
 export default function PropertyValue({type, value, onChange}) {
   if (type === Types.OBJECT || type === Types.ARRAY) return null;
@@ -48,3 +48,6 @@ export default function PropertyValue({type, value, onChange}) {
   );
 }
 
+function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}

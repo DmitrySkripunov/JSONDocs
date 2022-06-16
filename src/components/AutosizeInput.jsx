@@ -113,7 +113,7 @@ export default function AutosizeInput(props) {
   const {...inputProps} = props;
   cleanInputProps(inputProps);
   inputProps.className = props.inputClassName;
-  //inputProps.id = props;
+  inputProps.id = props.id;
   inputProps.style = inputStyle;
 
   return (

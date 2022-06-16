@@ -1,22 +1,26 @@
 {
-  "title": "Schema",
+  "title": "JSON Title",
   "type": "object",
-  "description": "",
+  "description": "JSON Description",
+  "$id": "0wCWp-rUkLgCqWazA2hLT",
   "properties": [
     {
       "description": "",
       "title": "address",
+      "$id": "673GrF53qqB1zBGhmO1ZB",
       "type": "object",
       "properties": [
         {
           "description": "",
           "title": "streetAddress",
+          "$id": "YEJGqX7RaAo4bbWAz10Eg",
           "type": "string",
           "default": "21 2nd Street"
         },
         {
           "description": "",
           "title": "city",
+          "$id": "ZjT-qiT2-Sme6Ud-zo2QB",
           "type": "string",
           "default": "New York"
         }
@@ -25,52 +29,47 @@
     {
       "description": "",
       "title": "phoneNumber",
+      "$id": "ujPvm5XbdW3QmWMmVKfDr",
       "type": "array",
       "properties": [
         {
-          "title": "0",
           "description": "",
+          "title": "0",
+          "$id": "Yrf510pZu0l0yXr2c5M3r",
           "type": "object",
           "properties": [
             {
               "description": "",
-              "title": "empty array",
-              "type": "array",
-              "properties": []
-            },
-            {
-              "description": "",
-              "title": "empty object",
-              "type": "object",
-              "properties": []
-            },
-            {
-              "description": "",
               "title": "location",
+              "$id": "ccSzxbIvxCYKeTx6S9pUi",
               "type": "string",
               "default": "home"
             },
             {
               "description": "",
               "title": "code",
+              "$id": "WGDKWyHS4iwMRlVF1YkL1",
               "type": "number",
               "default": 44
             },
             {
               "description": "",
               "title": "test",
+              "$id": "fQE4BY8gWod8Z_ahREYxt",
               "type": "object",
               "properties": [
                 {
                   "description": "",
                   "title": "first",
+                  "$id": "3_8nYp7cfcE39iJPzy3Zd",
                   "type": "number",
                   "default": 1
                 },
                 {
                   "description": "",
                   "title": "two",
-                  "type": "null",
+                  "$id": "kkUs4u5-gpThAkW_EqjiU",
+                  "type": "object",
                   "default": null
                 }
               ]
