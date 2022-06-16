@@ -1,12 +1,15 @@
 import React, {useState} from 'react';
 import Textarea from 'react-textarea-autosize';
+import {useStoreon} from 'storeon/react';
 import Menu from './Menu';
 import PropertyLabel from './PropertyLabel';
 import {Types} from '../../libs/parser';
+import Actions from '../../stores/actions';
 
 export default function Property({schema, isRoot, parent = {}, propertyIndex = 0, propertyPath = []}) {
   const [isMenu, setIsMenu] = useState(false);
   const [showProperties, setShowProperties] = useState(false);
+  const {dispatch} = useStoreon();
 
   const showMenu = evt => {
     const rect = evt.currentTarget.getBoundingClientRect();
@@ -18,7 +21,9 @@ export default function Property({schema, isRoot, parent = {}, propertyIndex = 0
 
   const onMenuAction = action => {
     switch (action) {
-      case 'insert-array': break;
+      case 'insert-array': 
+        dispatch(Actions.INSERT_ARRAY, {path: propertyPath});
+        break;
       case 'insert-object': break;
       case 'insert-value': break;
       case 'duplicate': break;
@@ -56,7 +61,7 @@ export default function Property({schema, isRoot, parent = {}, propertyIndex = 0
   const insertable = schema.type === 'object' || schema.type === 'array';
 
   const onChangeDescription = evt => {
-    schema.description = evt.target.value;
+    dispatch(Actions.SET_DESCRIPTION, {value: evt.target.value, path: propertyPath});
   };
 
   const onShowProperties = _ => setShowProperties(!showProperties);

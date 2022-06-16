@@ -126,3 +126,12 @@ export function getPropertyValue(value) {
   
   return putValue;
 }
+
+export function getDefaultProp(type) {
+  return {
+    type,
+    description:  '',
+    properties:   [],
+    default:      null
+  };
+}

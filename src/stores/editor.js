@@ -1,6 +1,6 @@
 import Actions from './actions';
 import produce from 'immer';
-import {Types, isNumeric, getPropertyValue} from '../libs/parser';
+import {Types, getPropertyValue, getDefaultProp} from '../libs/parser';
 
 export function editor (store) {
   store.on('@init', () => ({
@@ -26,6 +26,26 @@ export function editor (store) {
 
       o.default = putValue.default;
       o.type    = putValue.type;
+    });
+
+    return {schema: nextState};
+  });
+
+  store.on(Actions.SET_DESCRIPTION, ({schema}, {value, path}) => {
+    const nextState = produce(schema, draftState => {
+      const o = getProperty(draftState, path);
+
+      o.description = value;
+    });
+
+    return {schema: nextState};
+  });
+
+  store.on(Actions.INSERT_ARRAY, ({schema}, {path}) => {
+    const nextState = produce(schema, draftState => {
+      const o = getProperty(draftState, path);
+
+      o.properties.push(getDefaultProp(Types.ARRAY));
     });
 
     return {schema: nextState};
