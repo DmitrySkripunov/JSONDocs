@@ -6,5 +6,6 @@ export default {
   INSERT_ARRAY:  '/editor/insert-array',
   INSERT_OBJECT: '/editor/insert-object',
   INSERT_VALUE:  '/editor/insert-value',
-  REMOVE:       '/editor/remove'
+  DUPLICATE:     '/editor/duplicate',
+  REMOVE:        '/editor/remove'
 };

@@ -173,8 +173,8 @@ export function makeJHTML(schema, isRoot = true, level = 1) {
 
   function _makeDescHandler(prop) {
     return `
-      <div class='desc-handler'>?
-      <div class='desc'>${_makeDescription(prop)}</div>
+      <div class="${`desc-handler ${prop.description.length === 0 ? 'empty' : ''}`}">?
+      <div class="desc">${_makeDescription(prop)}</div>
       </div>
     `;
   }
@@ -343,6 +343,10 @@ export function makeJHTMLFile(content) {
                     margin-left: 10px;
                     cursor: pointer;
                     position: relative;
+                }
+
+                .desc-handler.empty {
+                    --color: rgb(59, 59, 59);
                 }
                 
                 .desc-handler:hover{

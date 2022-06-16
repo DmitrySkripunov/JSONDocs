@@ -24,11 +24,17 @@ export default function Property({schema, isRoot, parent = {}, propertyIndex = 0
       case 'insert-array': 
         dispatch(Actions.INSERT_ARRAY, {path: propertyPath});
         break;
-      case 'insert-object': break;
-      case 'insert-value': break;
-      case 'duplicate': break;
+      case 'insert-object': 
+        dispatch(Actions.INSERT_OBJECT, {path: propertyPath});
+        break;
+      case 'insert-value': 
+        dispatch(Actions.INSERT_VALUE, {path: propertyPath});
+        break;
+      case 'duplicate': 
+        dispatch(Actions.DUPLICATE, {path: propertyPath, propertyIndex});
+        break;
       case 'remove': 
-        parent.properties.splice(propertyIndex, 1);
+        dispatch(Actions.REMOVE, {path: propertyPath, propertyIndex});
         break;
     }
     setIsMenu(false);
@@ -76,7 +82,7 @@ export default function Property({schema, isRoot, parent = {}, propertyIndex = 0
 
       <PropertyLabel schema={schema} parent={parent} propertyPath={propertyPath}/>
 
-      <div className="desc-handler">
+      <div className={`desc-handler ${schema.description.length === 0 ? 'empty' : ''}`}>
         ?
         <div className="desc">
           <Textarea style={{width: '95%'}} defaultValue={schema.description} onChange={onChangeDescription} />

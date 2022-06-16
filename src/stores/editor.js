@@ -1,6 +1,7 @@
 import Actions from './actions';
 import produce from 'immer';
 import {Types, getPropertyValue, getDefaultProp} from '../libs/parser';
+import {nanoid} from 'nanoid';
 
 export function editor (store) {
   store.on('@init', () => ({
@@ -51,14 +52,61 @@ export function editor (store) {
     return {schema: nextState};
   });
 
-  store.on(Actions.INSERT_VALUE, ({schema}, {value, path}) => {
-    const o = getProperty(schema, path);
+  store.on(Actions.INSERT_OBJECT, ({schema}, {path}) => {
+    const nextState = produce(schema, draftState => {
+      const o = getProperty(draftState, path);
+
+      o.properties.push(getDefaultProp(Types.OBJECT));
+    });
+
+    return {schema: nextState};
+  });
+
+  store.on(Actions.INSERT_VALUE, ({schema}, {path}) => {
+    const nextState = produce(schema, draftState => {
+      const o = getProperty(draftState, path);
+
+      o.properties.push(getDefaultProp(Types.NULL));
+    });
 
     return {schema: nextState};
   });
 
   store.on(Actions.REMOVE, ({schema}, {path, propertyIndex}) => {
-    const o = getProperty(schema, path);
+    const nextState = produce(schema, draftState => {
+      let parent = draftState;
+
+      for (let i = 0; i < path.length - 1; i++) {
+        parent = parent.properties[path[i]];
+      }
+
+      parent.properties.splice(propertyIndex, 1);
+    });
+
+    return {schema: nextState};
+  });
+
+  store.on(Actions.DUPLICATE, ({schema}, {path, propertyIndex}) => {
+    let nextState = produce(schema, draftState => {
+      let parent = draftState;
+
+      for (let i = 0; i < path.length - 1; i++) {
+        parent = parent.properties[path[i]];
+      }
+
+      parent.properties.splice(propertyIndex, 0, parent.properties[propertyIndex]);
+    });
+
+    nextState = produce(nextState, draftState => {
+      const o = getProperty(draftState, path);
+
+      function updateId(o) {
+        o.$id = nanoid();
+        o?.properties?.forEach(p => updateId(p));
+      }
+
+      updateId(o);
+    });
 
     return {schema: nextState};
   });

@@ -129,6 +129,8 @@ export function getPropertyValue(value) {
 
 export function getDefaultProp(type) {
   return {
+    $id: nanoid(),
+    title: '',
     type,
     description:  '',
     properties:   [],
