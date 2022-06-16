@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack --mode=development",
-    "production": "BASEURL=JSONDocs NODE_ENV=production webpack --mode=production"
+    "production": "BASEURL=/JSONDocs NODE_ENV=production webpack --mode=production"
   },
   "author": "Dmitry Skripunov",
   "license": "",
