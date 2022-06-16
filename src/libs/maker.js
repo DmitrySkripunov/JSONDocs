@@ -76,31 +76,31 @@ export function syntaxHighlight(_json) {
 export function makeHTML(schema, isRoot = true) {
   let html = '';
 
-  const date = _randomString();
+  const id = nanoid();
 
-  if (schema.type === 'object' && schema.hasOwnProperty('default')) {
+  if (schema.type === Types.NULL) {
     html += schema.default;
-  } else if (schema.type === 'object' || schema.type === 'array') {
+  } else if (schema.type === Types.OBJECT || schema.type === Types.ARRAY) {
     if (!isRoot) {
-      html += `<input type='checkbox' class='table-view-switcher' id='switcher-${date}'>`;
-      html += `<label for='switcher-${date}' class='${isRoot ? 'root' : ''}'></label>`;
+      html += `<input type='checkbox' class='table-view-switcher' id='switcher-${id}'>`;
+      html += `<label for='switcher-${id}' class='${isRoot ? 'root' : ''}'></label>`;
     }
 
     html += `<table class='object ${!isRoot ? 'hide' : ''}' cellpadding='0' cellspacing='0' >`;
 
     html += '<tr>';
-    html += `<td class='object-header' colspan='2'>${(schema.type === 'object') ? 'Object' : 'Array'} {${schema.properties.length}}</td>`;
+    html += `<td class='object-header' colspan='2'>${(schema.type === Types.OBJECT) ? 'Object' : 'Array'} {${schema?.properties?.length ?? 0}}</td>`;
     html += `<td>${schema.description}</td>`;
     html += '</tr>';
 
     html += '<tr class="header">';
-    html += `<td>${schema.type === 'array' ? 'Item #' : 'Key'}</td>`;
+    html += `<td>${schema.type === Types.ARRAY ? 'Item #' : 'Key'}</td>`;
     html += '<td>Value</td>';
     html += '<td>Description</td>';
     html += '</tr>';
 
-    schema.properties.forEach((prop, i) => {
-      html += `<tr class='row'><td class='object-key'>${(schema.type === 'object') ? prop.title : i}</td>`;
+    schema?.properties?.forEach((prop, i) => {
+      html += `<tr class='row'><td class='object-key'>${prop.title}</td>`;
       html += `<td class='object-value'>${makeHTML(prop, false)}</td>`;
       html += `<td class='object-description'>${prop.description}</td>`;
       html += '</tr>';
@@ -166,82 +166,6 @@ export function makeJHTML(schema, isRoot = true) {
     return `
       <div class="${`desc-handler ${prop.description.length === 0 ? 'empty' : ''}`}">?
         <div class="desc">${_makeDescription(prop)}</div>
-      </div>
-    `;
-  }
-
-  function _makeDescription(prop) {
-    return prop.description.replace(/(?:\r\n|\r|\n)/g, '<br />');
-  }
-
-  return html;
-}
-
-export function makeJHTML2(schema, isRoot = true) {
-  let html = '';
-
-  if (isRoot) {
-    html += `<span class='key-postfix'>${(schema.type === 'object') ? `Object {${schema.properties.length}}` : `Array [${schema.properties.length}]`}</span>`;
-    html += _makeDescHandler(schema);
-  }
-
-  if (schema.type === Types.NULL) {
-    html += '<span class="null">null</span>';
-    html += _makeDescHandler(schema);
-  } else if ((schema.type === 'object' || schema.type === 'array') && !schema.hasOwnProperty('default')) {
-    html += '<div class="props">';
-
-    schema.properties.forEach((prop, i) => {
-      html += '<div style="margin: 15px 0;">';
-
-      if ((prop.type === 'object' || prop.type === 'array') && !prop.hasOwnProperty('default')) {
-        const id = _randomString();
-        html += `<input type='checkbox' class='jhtml-view-switcher' id='jhtml-view-switcher-${id}'/>`;
-        html += `<label for='jhtml-view-switcher-${id}'></label>`;
-      }
-
-
-      let v = (schema.type === 'object') ? prop.title : i;
-      let cl = '';
-      if (v === '') {
-        cl += ' empty';
-        v = '(empty string)';
-      }
-      html += `<span class='${cl}'>${v}</span>`;
-
-      if (prop.type === 'object' && !prop.hasOwnProperty('default')) {
-        html += ` <span class='key-postfix'>{${prop.properties.length}}</span>`;
-      } else if (prop.type === 'array' && !prop.hasOwnProperty('default')) {
-        html += ` <span class='key-postfix'>[${prop.properties.length}]</span>`;
-      } else {
-        html += ' <span class="key-postfix">:</span> ';
-      }
-
-      if ((prop.type === 'object' || prop.type === 'array') && !prop.hasOwnProperty('default')) {
-        html += _makeDescHandler(prop);
-      }
-
-      html += makeJHTML(prop, false);
-      html += '</div>';
-    });
-
-    html += '</div>';
-  } else {
-    let cl = schema.type === 'object' ? 'null' : schema.type;
-    let v = schema.default;
-    if (schema.default === '') {
-      cl += ' empty';
-      v = '(empty string)';
-    }
-		
-    html += `<span class='${cl}'>${v}</span>`;
-    html += _makeDescHandler(schema);
-  }
-
-  function _makeDescHandler(prop) {
-    return `
-      <div class="${`desc-handler ${prop.description.length === 0 ? 'empty' : ''}`}">?
-      <div class="desc">${_makeDescription(prop)}</div>
       </div>
     `;
   }
