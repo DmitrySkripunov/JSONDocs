@@ -48,7 +48,8 @@ export function _randomString() {
   return text;
 }
 
-export function syntaxHighlight(json) {
+export function syntaxHighlight(_json) {
+  let json = _json;
   if (typeof json !== 'string') {
     json = JSON.stringify(json, undefined, 2);
   }
@@ -123,7 +124,6 @@ export function makeJHTML(schema, isRoot = true, level = 1) {
 
     html += `<div class='prop' style='margin-left:${level * 10}px'>`;
 
-    ++level;
     schema.properties.forEach((prop, i) => {
       html += '<div style="margin: 15px 0;">';
 
@@ -154,7 +154,7 @@ export function makeJHTML(schema, isRoot = true, level = 1) {
         html += _makeDescHandler(prop);
       }
 
-      html += makeJHTML(prop, false, level);
+      html += makeJHTML(prop, false, level + 1);
       html += '</div>';
     });
 

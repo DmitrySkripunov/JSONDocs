@@ -122,5 +122,7 @@ export function getPropertyValue(value) {
   }	else if (isNumeric(value)) {
     putValue.default = parseFloat(value);
     putValue.type = Types.NUMBER;
-  }	    
+  }
+  
+  return putValue;
 }

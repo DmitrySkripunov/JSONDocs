@@ -10,7 +10,7 @@ export default function PropertyValue({type, value, onChange}) {
       inputClassName={`${type} key editable`}
       onChange={onChange}
       placeholder="value"
-      value={value}
+      value={String(value)}
     />
   );
 }
