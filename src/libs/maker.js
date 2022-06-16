@@ -185,3 +185,199 @@ export function makeJHTML(schema, isRoot = true, level = 1) {
 
   return html;
 }
+
+
+export function makeHTMLFile(content) {
+  return `<!DOCTYPE html>
+					<html lang="en">
+						<head>
+							<meta charset="UTF-8">
+							<title>JSON Doc</title>
+							<style>
+								body{
+									width: 1024px;
+									margin: 0 auto;
+								}
+								
+								.object{
+										border: 1px solid #888888;
+										background: #ffffff;
+								}
+				
+								.object.hide {
+										display: none;
+								}
+				
+								.object td{
+										padding: 10px;
+								}
+				
+								.object tr.row:nth-child(1n)>td{
+										background: #eeeeee;
+								}
+								.object tr.row:nth-child(2n)>td{
+										background: #ffffff;
+								}
+				
+								.object-header{
+										padding: 5px;
+								}
+				
+								.object-key{
+										padding: 10px;
+										font-weight: bold;
+								}
+				
+								.object-value{
+										padding: 5px;
+								}
+				
+								.object-description{
+										padding: 5px;
+								}
+				
+								.header > td{
+										background: tomato;
+										color: #ffffff;
+								}
+				
+								.table-view-switcher{
+										display: none;
+								}
+				
+								.table-view-switcher + label{
+										cursor: pointer;
+										color: blue;
+										text-decoration: underline;
+								}
+				
+								.table-view-switcher + label:before{
+										content: 'Show';
+								}
+				
+								.table-view-switcher:checked ~ table{
+										display: table;
+								}
+				
+								.table-view-switcher:checked + label:before{
+										content: 'Hide';
+								}
+						</style>
+						</head>
+						<body>
+							${content}
+						</body>`;
+}
+
+export function makeJHTMLFile(content) {
+  return `<!DOCTYPE html>
+          <html lang="en">
+            <head>
+              <meta charset="UTF-8">
+              <title>JSON Doc</title>
+              <style>
+                body{
+                  width: 1024px;
+                  margin: 0 auto;
+                }
+                
+                .string { color: green; }
+                .number { color: darkorange; }
+                .boolean { color: blue; }
+                .null { color: magenta; }
+                .key { color: red; }
+                .empty{ color: #999999; }
+                
+                .results{
+                    font-family: monospace,sans-serif;
+                    margin: 10px;
+                    box-shadow: 1px 1px 6px #999;
+                    padding: 10px;
+                    width: 100%;
+                }
+                
+                .key-postfix{
+                    color: #888888;
+                }
+                
+                .jhtml-view-switcher{
+                    display: none;
+                }
+                
+                .jhtml-view-switcher + label{
+                    cursor: pointer;
+                }
+                
+                .jhtml-view-switcher + label:before{
+                    content: '▶';
+                    padding: 5px;
+                }
+                
+                .jhtml-view-switcher:checked ~ .props{
+                    display: block;
+                    margin-left: 15px;
+                }
+                
+                .jhtml-view-switcher:checked ~ .props.empty-object{
+                    color: #bbbbbb;
+                    margin: 15px 55px;
+                }
+                
+                .jhtml-view-switcher:checked + label:before{
+                    content: '▼';
+                }
+                
+                .jhtml-view-switcher:not(:checked) ~ .props{
+                    display: none;
+                }
+                
+                .desc-handler{
+                    display: inline-block;
+                    background: tomato;
+                    color: #ffffff;
+                    border-radius: 50%;
+                    width: 25px;
+                    height: 25px;
+                    line-height: 25px;
+                    text-align: center;
+                    margin-left: 10px;
+                    cursor: pointer;
+                    position: relative;
+                }
+                
+                .desc-handler:hover{
+                    width: 50%;
+                }
+                
+                .desc-handler > .desc {
+                    display: none;
+                    position: absolute;
+                    z-index: 1;
+                    top: 0;
+                    left: 0;
+                    background: #ffffff;
+                    padding: 10px;
+                    border-radius: 4px;
+                    border: 2px solid tomato;
+                    color: #333333;
+                    width: 100%;
+                    max-height: 200px;
+                    overflow-y: auto;
+                    box-shadow: 1px 2px 8px tomato;
+                }
+                
+                .desc-handler:hover > .desc{
+                    display: block;
+                }
+                
+                .prop{
+                    margin: 10px;
+                }
+            </style>
+            </head>
+            <body>
+              <div class="results">
+                ${content}
+              </div>
+            </body>`;
+}
