@@ -103,3 +103,24 @@ function _convertProperty(prop, propName) {
 
   return cProp;
 }
+
+export function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+export function getPropertyValue(value) {
+  const putValue = {
+    default:  value,
+    type:     Types.STRING
+  };
+  if (value === 'null') {
+    putValue.default = null;
+    putValue.type = Types.NULL;
+  } else if (value === 'true' || value === 'false') {
+    putValue.default = value === 'true';
+    putValue.type = Types.BOOLEAN;
+  }	else if (isNumeric(value)) {
+    putValue.default = parseFloat(value);
+    putValue.type = Types.NUMBER;
+  }	    
+}

@@ -68,7 +68,7 @@
 
     "react/prefer-es6-class": 1,
     "react/jsx-pascal-case": 2,
-    "react/jsx-closing-bracket-location": [1, "props-aligned"],
+    "react/jsx-closing-bracket-location": [1, "tag-aligned"],
     "jsx-quotes": 2,
     "react/jsx-boolean-value": 2,
     "react/jsx-wrap-multilines": 1,

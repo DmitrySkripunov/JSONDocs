@@ -1,5 +1,6 @@
 import React from 'react';
 import {useStoreon} from 'storeon/react';
+import classnames from 'classnames';
 import {Types} from '../../libs/parser';
 import Actions from '../../stores/actions';
 import AutosizeInput from '../AutosizeInput';
@@ -10,76 +11,49 @@ export default function PropertyLabel({schema, parent, propertyPath = []}) {
   const key   = schema.title;
   const type  = schema.type;
   const value = schema.default;
-  const {dispatch}      = useStoreon();
+  const {dispatch} = useStoreon();
 
-  const onKeyInput = evt => {
-    const target  = evt.target;
-    const value   = target.value;
-
-    if (isKeyDuplicate(value, parent.properties, propertyPath[propertyPath.length - 1])) {
-      target.title = 'The key is duplicated!';
-      target.classList.add('keyerror');
-    } else {
-      target.classList.remove('keyerror');
-      target.title = '';
-    }
-
-    dispatch(Actions.UPDATE_KEY, {key: value, path: propertyPath});
+  const onChangeKey = evt => {
+    dispatch(Actions.UPDATE_KEY, {key: evt.target.value, path: propertyPath});
   };
 
-  let cs = parent.type !== Types.ARRAY ? 'editablekey' : '';
-  let title = '';
+  const inputClassNames = classnames('key', {
+    'editable': parent.type !== Types.ARRAY
+  });
 
+  let error = null;
   if (isKeyDuplicate(key, parent.properties, propertyPath[propertyPath.length - 1])) {
-    title = 'The key is duplicated!';
-    cs += ' keyerror';
+    error = <span className="keyerror" title="The key is duplicated!"/>;
   }
 
-  const changeValue = value => {
-    setType(value.type);
-    dispatch(Actions.UPDATE_VALUE, {value: value.default, type: value.type, path: propertyPath});
+  const onChangeValue = evt => {
+    dispatch(Actions.UPDATE_VALUE, {value: evt.target.value, path: propertyPath});
   };
 
   return (
     <>
-      {/*<span
-        onInput={onKeyInput}
-        onKeyDown={onKeyDown}
-        placeholder="field"
-        className={cs}
-        title={title}
-        contentEditable={parent.type !== Types.ARRAY}
-        suppressContentEditableWarning >
-        {key}
-  </span>*/}
-      {/*<input 
-        type="text"
-        value={key} 
-        readOnly={parent.type === Types.ARRAY} 
-        onChange={onKeyInput}
-        placeholder="field" 
-/>*/}
       <AutosizeInput 
         value={key}
-        inputClassName={cs} 
+        inputClassName={inputClassNames} 
         readOnly={parent.type === Types.ARRAY} 
-        onChange={onKeyInput}
+        onChange={onChangeKey}
         placeholder="field"
       />
 
+      {error}
+      
       <Postfix type={type} count={schema?.properties?.length}/>
 
-      <PropertyValue type={type} value={value} onChange={changeValue}/>
+      <PropertyValue type={type} value={value} onChange={onChangeValue}/>
     </>
   );
 }
 
-function isKeyDuplicate(key, props, keyIndex) {
-  let isDuplicate = false;
+function isKeyDuplicate(key, props = [], keyIndex) {
+  for (let i = 0; i < props.length; i++) {
+    if (i === keyIndex) continue;
+    if (props[i].title === key) return true;
+  }
 
-  props.forEach((prop, i) => {
-    if (prop.title === key && i !== keyIndex) isDuplicate = true;
-  });
-
-  return isDuplicate;
+  return false;
 }

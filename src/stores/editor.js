@@ -1,5 +1,6 @@
 import Actions from './actions';
 import produce from 'immer';
+import {Types, isNumeric, getPropertyValue} from '../libs/parser';
 
 export function editor (store) {
   store.on('@init', () => ({
@@ -17,12 +18,14 @@ export function editor (store) {
     return {schema: nextState};
   });
 
-  store.on(Actions.UPDATE_VALUE, ({schema}, {value, type, path}) => {
-    const nextState = produce(schema, draftState => {
-      const o = getProperty(schema, path);
+  store.on(Actions.UPDATE_VALUE, ({schema}, {value, path}) => {
+    const putValue = getPropertyValue(value);
 
-      o.default = value;
-      o.type    = type;
+    const nextState = produce(schema, draftState => {
+      const o = getProperty(draftState, path);
+
+      o.default = putValue.default;
+      o.type    = putValue.type;
     });
 
     return {schema: nextState};
