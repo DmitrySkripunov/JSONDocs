@@ -122,7 +122,7 @@ export function makeJHTML(schema, isRoot = true, level = 1) {
       html += _makeDescHandler(schema);
     }
 
-    html += `<div class='prop' style='margin-left:${level * 10}px'>`;
+    html += '<div class="props">';
 
     schema.properties.forEach((prop, i) => {
       html += '<div style="margin: 15px 0;">';
@@ -306,6 +306,12 @@ export function makeJHTMLFile(content) {
                 
                 .jhtml-view-switcher + label{
                     cursor: pointer;
+                    cursor: pointer;
+                    width: 25px;
+                    height: 25px;
+                    display: inline-block;
+                    text-align: center;
+                    margin-right: 5px;
                 }
                 
                 .jhtml-view-switcher + label:before{
@@ -374,8 +380,8 @@ export function makeJHTMLFile(content) {
                     display: block;
                 }
                 
-                .prop{
-                    margin: 10px;
+                .props{
+                    margin: 10px 10px 10px 30px;
                 }
             </style>
             </head>

@@ -105,16 +105,22 @@ textarea{
 
 .jhtml-view-switcher + label{
     cursor: pointer;
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    display: inline-block;
+    text-align: center;
 }
 
 .jhtml-view-switcher + label:before{
     content: '▶';
     padding: 5px;
+    width: 30px;
+    height: 30px;
 }
 
 .jhtml-view-switcher:checked ~ .props{
     display: block;
-    margin-left: 15px;
 }
 
 .jhtml-view-switcher:checked ~ .props.empty-object{
@@ -178,8 +184,8 @@ textarea{
 /*
     Editable JHTML
 */
-.prop{
-    margin: 10px;
+.props{
+    margin: 10px 10px 10px 30px;
 }
 
 .key {
@@ -222,7 +228,7 @@ textarea{
     color: #aaa;
     cursor: pointer;
     position: relative;
-    margin: 20px 5px 0 0;
+    margin: 0 5px 0 0;
     font-family: Arial, Helvetica, sans-serif;
 }
 .edithandler:after{
