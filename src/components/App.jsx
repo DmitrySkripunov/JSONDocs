@@ -7,7 +7,6 @@ import testJSON from '../test-json.json';
 import testSchema from '../test-schema.json';
 import {useStoreon} from 'storeon/react';
 import Actions from '../stores/actions';
-import store from '../stores/index';
 
 export default function App () {
   const [inputJson, setInputJSON]     = useState(JSON.stringify(testJSON));
@@ -44,7 +43,7 @@ export default function App () {
   const download = type && mode !== 'edit' ? <a href={file} download={downloadName}>{downloadName}</a> : null;
 
   const onSave = schema => {
-    //console.log(store.get('editor').schema);
+    setResult(makeJHTML(schema));
     setInputJSON(JSON.stringify(makeJSON(schema)));
     setInputSchema(JSON.stringify(schema));
   };

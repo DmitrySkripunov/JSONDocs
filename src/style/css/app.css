@@ -125,7 +125,6 @@ textarea{
 
 .jhtml-view-switcher:checked ~ .props.empty-object{
     color: #bbbbbb;
-    margin: 15px 55px 0;
 }
 
 .jhtml-view-switcher:checked + label:before{

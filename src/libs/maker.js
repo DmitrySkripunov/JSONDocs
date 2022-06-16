@@ -1,3 +1,5 @@
+import {nanoid} from 'nanoid';
+import {Types} from './parser';
 
 export function makeJSON(schema) {
   let json = null;
@@ -113,15 +115,80 @@ export function makeHTML(schema, isRoot = true) {
   return html;
 }
 
-export function makeJHTML(schema, isRoot = true, level = 1) {
+export function makeJHTML(schema, isRoot = true) {
   let html = '';
 
-  if ((schema.type === 'object' || schema.type === 'array') && !schema.hasOwnProperty('default')) {
-    if (isRoot) {
-      html += `<span class='key-postfix'>${(schema.type === 'object') ? `Object {${schema.properties.length}}` : `Array [${schema.properties.length}]`}</span>`;
-      html += _makeDescHandler(schema);
-    }
+  html += '<div class="props">';
 
+  if ((schema.type === Types.ARRAY || schema.type === Types.OBJECT) && !isRoot) {
+    const id = nanoid();
+    html += `<input type='checkbox' class='jhtml-view-switcher' id='jhtml-view-switcher-${id}'/>`;
+    html += `<label for='jhtml-view-switcher-${id}'></label>`;
+  }
+
+  if (isRoot) {
+    html += `<span class='key-postfix'>${(schema.type === Types.OBJECT) ? `Object {${schema.properties.length}}` : `Array [${schema.properties.length}]`}</span>`;
+  } else {
+    html += `<span >${schema.title}</span>`;
+    if (schema.type === Types.OBJECT) {
+      html += ` <span class='key-postfix'>{${schema?.properties?.length ?? 0}}</span>`;
+    } else if (schema.type === Types.ARRAY) {
+      html += ` <span class='key-postfix'>[${schema?.properties?.length ?? 0}]</span>`;
+    } else {
+      html += ' <span class="key-postfix">:</span> ';
+    }
+  }
+
+  if (schema.type !== Types.ARRAY && schema.type !== Types.OBJECT) {
+    html += ` <span class="${schema.type}">${schema.default}</span> `;
+  }
+
+  html += _makeDescHandler(schema);
+  
+
+  let children = '';
+  if (schema.type === Types.OBJECT) {
+    children = '<div class="props empty-object">(empty object)</div>';
+  } else if (schema.type === Types.ARRAY) {
+    children = '<div class="props empty-object">(empty array)</div>';
+  }
+  if (schema.properties && schema.properties.length > 0) {
+    children = '';
+    schema.properties.forEach(prop => {
+      children += makeJHTML(prop, false);
+    });
+  }
+
+  html += children;
+  html += '</div>';
+
+  function _makeDescHandler(prop) {
+    return `
+      <div class="${`desc-handler ${prop.description.length === 0 ? 'empty' : ''}`}">?
+        <div class="desc">${_makeDescription(prop)}</div>
+      </div>
+    `;
+  }
+
+  function _makeDescription(prop) {
+    return prop.description.replace(/(?:\r\n|\r|\n)/g, '<br />');
+  }
+
+  return html;
+}
+
+export function makeJHTML2(schema, isRoot = true) {
+  let html = '';
+
+  if (isRoot) {
+    html += `<span class='key-postfix'>${(schema.type === 'object') ? `Object {${schema.properties.length}}` : `Array [${schema.properties.length}]`}</span>`;
+    html += _makeDescHandler(schema);
+  }
+
+  if (schema.type === Types.NULL) {
+    html += '<span class="null">null</span>';
+    html += _makeDescHandler(schema);
+  } else if ((schema.type === 'object' || schema.type === 'array') && !schema.hasOwnProperty('default')) {
     html += '<div class="props">';
 
     schema.properties.forEach((prop, i) => {
@@ -154,7 +221,7 @@ export function makeJHTML(schema, isRoot = true, level = 1) {
         html += _makeDescHandler(prop);
       }
 
-      html += makeJHTML(prop, false, level + 1);
+      html += makeJHTML(prop, false);
       html += '</div>';
     });
 
